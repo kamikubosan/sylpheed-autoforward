@@ -1,0 +1,5 @@
+.deps
+.libs
+autoforward.la
+autoforward.lo
+Makefile
