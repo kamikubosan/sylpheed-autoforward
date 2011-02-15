@@ -48,7 +48,7 @@ void plugin_load(void)
 	debug_print("initializing autoforward plug-in\n");
 
 	syl_plugin_add_menuitem("/Tools", NULL, NULL, NULL);
-	syl_plugin_add_menuitem("/Tools", _("Enable autoforward"), exec_autoforward_menu_cb, NULL);
+	syl_plugin_add_menuitem("/Tools", _("Toggle autoforward"), exec_autoforward_menu_cb, NULL);
 
     g_signal_connect(syl_app_get(), "add-msg", G_CALLBACK(exec_autoforward_cb), NULL);
 
@@ -91,9 +91,52 @@ static void exec_autoforward_menu_cb(void)
 
 void exec_autoforward_cb(GObject *obj, FolderItem *item, const gchar *file, guint num)
 {
-	debug_print("exec_autoforward_cb\n");
-	debug_print("guint num:%d\n", num);
+	debug_print("[PLUGIN] exec_autoforward_cb\n");
+    debug_print("[PLUGIN] file:%s\n", file);
+	debug_print("[PLUGIN] guint num:%d\n", num);
     if (g_enable!=TRUE){
         return;
     }
+    if (item->stype != F_NORMAL && item->stype != F_INBOX){
+        debug_print("[PLUGIN] neither F_NORMAL nor F_INBOX\n");
+        return;
+    }
+    
+    PrefsAccount *ac = (PrefsAccount*)account_get_default();
+    debug_print("[PLUGIN] check account address\n");
+    g_return_if_fail(ac != NULL);
+    
+    debug_print("[PLUGIN] account address:%s\n", ac->address);
+    syl_plugin_send_message_set_forward_flags(ac->address);
+    debug_print("[PLUGIN] syl_plugin_send_message_set_forward_flags done.\n");
+
+	FILE *fp;
+    gchar *rcpath;
+    GSList* to_list=NULL;
+
+    gchar buf[PREFSBUFSIZE];
+	rcpath = g_strconcat(get_rc_dir(), G_DIR_SEPARATOR_S, "autoforwardrc", NULL);
+	g_free(rcpath);
+
+    debug_print("[PLUGIN] rcpath:%s\n", rcpath);
+	if ((fp = g_fopen(rcpath, "rb")) == NULL) {
+		if (ENOENT != errno) FILE_OP_ERROR(rcpath, "fopen");
+		g_free(rcpath);
+		return;
+	}
+	g_free(rcpath);
+
+    debug_print("[PLUGIN] read rcpath:%s\n", rcpath);
+    while (fgets(buf, sizeof(buf), fp) != NULL) {
+		g_strstrip(buf);
+		if (buf[0] == '\0') continue;
+        to_list = address_list_append(to_list, buf);
+	}
+	fclose(fp);
+
+    debug_print("[PLUGIN] check to_list\n");
+    g_return_if_fail(to_list != NULL);
+
+    syl_plugin_send_message(file, ac, to_list);
+    debug_print("[PLUGIN] syl_plugin_send_message done.\n");
 }
