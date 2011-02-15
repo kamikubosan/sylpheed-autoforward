@@ -30,6 +30,7 @@
 #include "procmsg.h"
 #include "procmime.h"
 #include "utils.h"
+#include "alertpanel.h"
 
 #include <glib/gi18n-lib.h>
 
@@ -81,9 +82,11 @@ static void exec_autoforward_menu_cb(void)
 	debug_print("exec_autoforward\n");
 
     if (g_enable != TRUE){
+        syl_plugin_alertpanel_message(_("Autoforward"), _("autoforward plugin is enabled."), ALERT_NOTICE);
         debug_print("enable exec_autoforward_cb\n");
         g_enable=TRUE;
     }else{
+        syl_plugin_alertpanel_message(_("Autoforward"), _("autoforward plugin is disabled."), ALERT_NOTICE);
         debug_print("disable exec_autoforward_cb\n");
         g_enable=FALSE;
     }
