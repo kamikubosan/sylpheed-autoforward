@@ -119,7 +119,6 @@ void exec_autoforward_cb(GObject *obj, FolderItem *item, const gchar *file, guin
 
     gchar buf[PREFSBUFSIZE];
 	rcpath = g_strconcat(get_rc_dir(), G_DIR_SEPARATOR_S, "autoforwardrc", NULL);
-	g_free(rcpath);
 
     debug_print("[PLUGIN] rcpath:%s\n", rcpath);
 	if ((fp = g_fopen(rcpath, "rb")) == NULL) {
