@@ -1,5 +1,10 @@
 2011-02-21 HAYASHI Kentaro <kenhys@gmail.com>
 	
+	* version 0.3.0
+	  support toggle status icon from statusbar.
+
+2011-02-21 HAYASHI Kentaro <kenhys@gmail.com>
+	
 	* version 0.2.0
 	  support toggle status operation from statusbar.
 
