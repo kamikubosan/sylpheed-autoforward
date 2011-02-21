@@ -41,8 +41,13 @@ static SylPluginInfo info = {
 	"Automatically forwarding mail plug-in for Sylpheed"
 };
 
+static gboolean g_enable = FALSE;
+
 static void exec_autoforward_cb(GObject *obj, FolderItem *item, const gchar *file, guint num);
 static void exec_autoforward_menu_cb(void);
+
+static GtkWidget *g_plugin_on = NULL;
+static GtkWidget *g_plugin_off = NULL;
 
 void plugin_load(void)
 {
@@ -52,6 +57,29 @@ void plugin_load(void)
 	syl_plugin_add_menuitem("/Tools", _("Toggle autoforward"), exec_autoforward_menu_cb, NULL);
 
     g_signal_connect(syl_app_get(), "add-msg", G_CALLBACK(exec_autoforward_cb), NULL);
+
+    GtkWidget *mainwin = syl_plugin_main_window_get();
+    GtkWidget *statusbar = syl_plugin_main_window_get_statusbar();
+    GtkWidget *plugin_box = gtk_hbox_new(FALSE, 0);
+
+    g_plugin_on = gtk_label_new(_("AF ON"));
+    g_plugin_off = gtk_label_new(_("AF OFF"));
+
+    gtk_box_pack_start(GTK_BOX(plugin_box), g_plugin_on, FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(plugin_box), g_plugin_off, FALSE, FALSE, 0);
+
+    GtkWidget *onoff_switch = gtk_button_new();
+    gtk_button_set_relief(GTK_BUTTON(onoff_switch), GTK_RELIEF_NONE);
+	GTK_WIDGET_UNSET_FLAGS(onoff_switch, GTK_CAN_FOCUS);
+	gtk_widget_set_size_request(onoff_switch, 50, 20);
+
+    gtk_container_add(GTK_CONTAINER(onoff_switch), plugin_box);
+	g_signal_connect(G_OBJECT(onoff_switch), "clicked",
+                     G_CALLBACK(exec_autoforward_menu_cb), mainwin);
+	gtk_box_pack_start(GTK_BOX(statusbar), onoff_switch, FALSE, FALSE, 0);
+
+    gtk_widget_show_all(onoff_switch);
+    gtk_widget_hide(g_plugin_on);
 
     debug_print("autoforward_tool plug-in loading done.\n");
 }
@@ -71,8 +99,6 @@ gint plugin_interface_version(void)
 	return SYL_PLUGIN_INTERFACE_VERSION;
 }
 
-static gboolean g_enable = FALSE;
-
 static void exec_autoforward_menu_cb(void)
 {
 	MimeInfo *mimeinfo;
@@ -85,10 +111,14 @@ static void exec_autoforward_menu_cb(void)
         syl_plugin_alertpanel_message(_("Autoforward"), _("autoforward plugin is enabled."), ALERT_NOTICE);
         debug_print("enable exec_autoforward_cb\n");
         g_enable=TRUE;
+        gtk_widget_hide(g_plugin_off);
+        gtk_widget_show(g_plugin_on);
     }else{
         syl_plugin_alertpanel_message(_("Autoforward"), _("autoforward plugin is disabled."), ALERT_NOTICE);
         debug_print("disable exec_autoforward_cb\n");
         g_enable=FALSE;
+        gtk_widget_hide(g_plugin_on);
+        gtk_widget_show(g_plugin_off);
     }
 }
 
