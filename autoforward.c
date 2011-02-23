@@ -32,7 +32,7 @@
 #include "procmime.h"
 #include "utils.h"
 #include "alertpanel.h"
-
+#include "prefs_common.h"
 #include "online.xpm"
 #include "offline.xpm"
 
@@ -40,7 +40,7 @@
 
 static SylPluginInfo info = {
 	"Auto mail forward Plug-in",
-	"0.3.0",
+	"0.4.0",
 	"HAYASHI Kentaro",
 	"Automatically forwarding mail plug-in for Sylpheed"
 };
@@ -138,6 +138,11 @@ void exec_autoforward_cb(GObject *obj, FolderItem *item, const gchar *file, guin
         return;
     }
     if (item->stype != F_NORMAL && item->stype != F_INBOX){
+        return;
+    }
+
+    PrefsCommon *prefs_common = prefs_common_get();
+    if (prefs_common->online_mode != TRUE){
         return;
     }
     

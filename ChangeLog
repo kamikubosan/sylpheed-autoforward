@@ -1,3 +1,8 @@
+2011-02-23 HAYASHI Kentaro <kenhys@gmail.com>
+	
+	* version 0.4.0
+	  disable plugin in offline mode.
+	
 2011-02-21 HAYASHI Kentaro <kenhys@gmail.com>
 	
 	* version 0.3.0
