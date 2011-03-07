@@ -58,7 +58,7 @@ static GtkTooltips *g_tooltip = NULL;
 
 void plugin_load(void)
 {
-  syl_init_gettext("autoforward", ".");
+  syl_init_gettext("autoforward", "lib/locale");
   textdomain("autoforward");
 
 
