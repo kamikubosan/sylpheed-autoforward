@@ -37,12 +37,13 @@
 #include "offline.xpm"
 
 #include <glib/gi18n-lib.h>
+#include <locale.h>
 
 static SylPluginInfo info = {
-	"Auto mail forward Plug-in",
+	N_("Auto mail forward Plug-in"),
 	"0.4.0",
 	"HAYASHI Kentaro",
-	"Automatically forwarding mail plug-in for Sylpheed"
+	N_("Automatically forwarding mail plug-in for Sylpheed")
 };
 
 static gboolean g_enable = FALSE;
@@ -57,7 +58,11 @@ static GtkTooltips *g_tooltip = NULL;
 
 void plugin_load(void)
 {
-	syl_plugin_add_menuitem("/Tools", NULL, NULL, NULL);
+  syl_init_gettext("autoforward", ".");
+  textdomain("autoforward");
+
+
+  syl_plugin_add_menuitem("/Tools", NULL, NULL, NULL);
 	syl_plugin_add_menuitem("/Tools", _("Toggle autoforward"), exec_autoforward_menu_cb, NULL);
 
     g_signal_connect(syl_app_get(), "add-msg", G_CALLBACK(exec_autoforward_cb), NULL);

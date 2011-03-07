@@ -18,3 +18,13 @@ com="gcc -shared -o $TARGET $OBJS -L./lib $LIBSYLPH $LIBSYLPHEED $LIBS -lssleay3
 echo $com
 eval $com
 
+if [ ! -z "$1" ]; then
+  case "$1" in
+      pot)
+          mkdir -p po
+          com="xgettext autoforward.c -k_ -kN_ -o po/autoforward.pot"
+          ;;
+  esac
+  echo $com
+  eval $com
+fi
