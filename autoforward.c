@@ -37,6 +37,7 @@
 #include "offline.xpm"
 
 
+#include <glib.h>
 #include <glib/gi18n-lib.h>
 #include <locale.h>
 
@@ -62,6 +63,7 @@ static GtkWidget *g_plugin_on = NULL;
 static GtkWidget *g_plugin_off = NULL;
 static GtkWidget *g_onoff_switch = NULL;
 static GtkTooltips *g_tooltip = NULL;
+static GKeyFile *g_keyfile=NULL;
 
 void plugin_load(void)
 {
@@ -172,6 +174,7 @@ void exec_autoforward_cb(GObject *obj, FolderItem *item, const gchar *file, guin
     gchar buf[PREFSBUFSIZE];
 	rcpath = g_strconcat(get_rc_dir(), G_DIR_SEPARATOR_S, "autoforwardrc", NULL);
 
+#if 0
 	if ((fp = g_fopen(rcpath, "rb")) == NULL) {
 		if (ENOENT != errno) FILE_OP_ERROR(rcpath, "fopen");
 		g_free(rcpath);
@@ -185,7 +188,14 @@ void exec_autoforward_cb(GObject *obj, FolderItem *item, const gchar *file, guin
         to_list = address_list_append(to_list, buf);
 	}
 	fclose(fp);
+#else
 
+    g_keyfile = g_key_file_new();
+    g_key_file_load_from_file(g_keyfile, rcpath, G_KEY_FILE_KEEP_COMMENTS, NULL);
+    gchar *to=g_key_file_get_string (g_keyfile, "Forward", "To", NULL);
+    to_list = address_list_append(to_list, to);
+	g_free(rcpath);
+#endif
     g_return_if_fail(to_list != NULL);
 
     syl_plugin_send_message(file, ac, to_list);

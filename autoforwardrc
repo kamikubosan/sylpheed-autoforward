@@ -1,1 +1,5 @@
-hogehohoge@example.com
+#
+# autoforwardrc
+#
+[Forward]
+To=hogehohoge@example.com
