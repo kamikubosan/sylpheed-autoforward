@@ -3,3 +3,4 @@
 #
 [Forward]
 To=hogehohoge@example.com
+Startup=true
