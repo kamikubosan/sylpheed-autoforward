@@ -1,6 +1,6 @@
 #
 # autoforwardrc
 #
-[Forward]
-To=hogehohoge@example.com
-Startup=true
+[forward]
+to=hogehohoge@example.com
+startup=false

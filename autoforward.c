@@ -112,7 +112,7 @@ void plugin_load(void)
 	gchar *rcpath = g_strconcat(get_rc_dir(), G_DIR_SEPARATOR_S, "autoforwardrc", NULL);
     g_keyfile = g_key_file_new();
     g_key_file_load_from_file(g_keyfile, rcpath, G_KEY_FILE_KEEP_COMMENTS, NULL);
-    gchar *startup=g_key_file_get_string (g_keyfile, "Forward", "Startup", NULL);
+    gchar *startup=g_key_file_get_string (g_keyfile, "forward", "startup", NULL);
     debug_print("startup:%s", startup);
 	g_free(rcpath);
     if (strcmp("true", startup)==0){
@@ -208,7 +208,7 @@ void exec_autoforward_cb(GObject *obj, FolderItem *item, const gchar *file, guin
 
     g_keyfile = g_key_file_new();
     g_key_file_load_from_file(g_keyfile, rcpath, G_KEY_FILE_KEEP_COMMENTS, NULL);
-    gchar *to=g_key_file_get_string (g_keyfile, "Forward", "To", NULL);
+    gchar *to=g_key_file_get_string (g_keyfile, "forward", "to", NULL);
     debug_print("to:%s", to);
     to_list = address_list_append(to_list, to);
 	g_free(rcpath);

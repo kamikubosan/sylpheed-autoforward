@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-03-09 17:45+0900\n"
+"POT-Creation-Date: 2011-03-09 20:08+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,34 +16,30 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: autoforward.c:43
+#: autoforward.c:72 autoforward.c:73
 msgid "Auto mail forward Plug-in"
 msgstr ""
 
-#: autoforward.c:46
-msgid "Automatically forwarding mail plug-in for Sylpheed"
-msgstr ""
-
-#: autoforward.c:66
+#: autoforward.c:76
 msgid "Toggle autoforward"
 msgstr ""
 
-#: autoforward.c:120 autoforward.c:129
-msgid "Autoforward"
-msgstr ""
-
-#: autoforward.c:120
-msgid "autoforward plugin is enabled."
-msgstr ""
-
-#: autoforward.c:126
+#: autoforward.c:124 autoforward.c:153
 msgid "Autoforward is enabled. Click the icon to disable plugin."
 msgstr ""
 
-#: autoforward.c:129
+#: autoforward.c:147 autoforward.c:156
+msgid "Autoforward"
+msgstr ""
+
+#: autoforward.c:147
+msgid "autoforward plugin is enabled."
+msgstr ""
+
+#: autoforward.c:156
 msgid "autoforward plugin is disabled."
 msgstr ""
 
-#: autoforward.c:135
+#: autoforward.c:162
 msgid "Autoforward is disabled. Click the icon to enable plugin."
 msgstr ""
