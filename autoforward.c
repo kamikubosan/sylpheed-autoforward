@@ -36,14 +36,21 @@
 #include "online.xpm"
 #include "offline.xpm"
 
+
 #include <glib/gi18n-lib.h>
 #include <locale.h>
 
+#define _(String) dgettext("autoforward", String)
+#define N_(String) gettext_noop(String)
+#define gettext_noop(String) (String)
+
+#define PLUGIN_NAME "Auto mail forward Plug-in"
+#define PLUGIN_DESC "Automatically forwarding mail plug-in for Sylpheed"
 static SylPluginInfo info = {
-	N_("Auto mail forward Plug-in"),
-	"0.4.0",
+	N_(PLUGIN_NAME),
+	"0.5.0",
 	"HAYASHI Kentaro",
-	N_("Automatically forwarding mail plug-in for Sylpheed")
+	N_(PLUGIN_DESC)
 };
 
 static gboolean g_enable = FALSE;
@@ -59,15 +66,16 @@ static GtkTooltips *g_tooltip = NULL;
 void plugin_load(void)
 {
   syl_init_gettext("autoforward", "lib/locale");
-  textdomain("autoforward");
-
+  
+  debug_print(gettext("Auto mail forward Plug-in"));
+  debug_print(dgettext("autoforward", "Auto mail forward Plug-in"));
 
   syl_plugin_add_menuitem("/Tools", NULL, NULL, NULL);
-	syl_plugin_add_menuitem("/Tools", _("Toggle autoforward"), exec_autoforward_menu_cb, NULL);
+  syl_plugin_add_menuitem("/Tools", _("Toggle autoforward"), exec_autoforward_menu_cb, NULL);
 
-    g_signal_connect(syl_app_get(), "add-msg", G_CALLBACK(exec_autoforward_cb), NULL);
+  g_signal_connect(syl_app_get(), "add-msg", G_CALLBACK(exec_autoforward_cb), NULL);
 
-    GtkWidget *mainwin = syl_plugin_main_window_get();
+  GtkWidget *mainwin = syl_plugin_main_window_get();
     GtkWidget *statusbar = syl_plugin_main_window_get_statusbar();
     GtkWidget *plugin_box = gtk_hbox_new(FALSE, 0);
 
@@ -96,7 +104,8 @@ void plugin_load(void)
 
     gtk_widget_show_all(g_onoff_switch);
     gtk_widget_hide(g_plugin_on);
-
+    info.name = g_strdup(_(PLUGIN_NAME));
+    info.description = g_strdup(_(PLUGIN_DESC));
 }
 
 void plugin_unload(void)
