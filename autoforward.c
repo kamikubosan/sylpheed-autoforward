@@ -113,18 +113,19 @@ void plugin_load(void)
 
 	gchar *rcpath = g_strconcat(get_rc_dir(), G_DIR_SEPARATOR_S, "autoforwardrc", NULL);
     g_keyfile = g_key_file_new();
-    g_key_file_load_from_file(g_keyfile, rcpath, G_KEY_FILE_KEEP_COMMENTS, NULL);
-    gchar *startup=g_key_file_get_string (g_keyfile, "forward", "startup", NULL);
-    debug_print("startup:%s", startup);
-	g_free(rcpath);
-    if (strcmp("true", startup)==0){
-      g_enable=TRUE;
-      gtk_widget_hide(g_plugin_off);
-      gtk_widget_show(g_plugin_on);
-      gtk_tooltips_set_tip
-        (g_tooltip, g_onoff_switch,
-         _("Autoforward is enabled. Click the icon to disable plugin."),
-       NULL);
+    if (g_key_file_load_from_file(g_keyfile, rcpath, G_KEY_FILE_KEEP_COMMENTS, NULL)){
+        gchar *startup=g_key_file_get_string (g_keyfile, "forward", "startup", NULL);
+        debug_print("startup:%s", startup);
+        g_free(rcpath);
+        if (strcmp("true", startup)==0){
+            g_enable=TRUE;
+            gtk_widget_hide(g_plugin_off);
+            gtk_widget_show(g_plugin_on);
+            gtk_tooltips_set_tip
+                (g_tooltip, g_onoff_switch,
+                 _("Autoforward is enabled. Click the icon to disable plugin."),
+                 NULL);
+        }
     }
 }
 
@@ -242,14 +243,15 @@ static void exec_autoforward_menu_cb(void)
     /* load settings */
     gchar *rcpath = g_strconcat(get_rc_dir(), G_DIR_SEPARATOR_S, "autoforwardrc", NULL);
     g_keyfile = g_key_file_new();
-    g_key_file_load_from_file(g_keyfile, rcpath, G_KEY_FILE_KEEP_COMMENTS, NULL);
-    gchar *startup=g_key_file_get_string (g_keyfile, "forward", "startup", NULL);
-    debug_print("startup:%s", startup);
-    if (strcmp(startup, "true")==0){
-        gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(g_startup), TRUE);
+    if (g_key_file_load_from_file(g_keyfile, rcpath, G_KEY_FILE_KEEP_COMMENTS, NULL)){
+        gchar *startup=g_key_file_get_string (g_keyfile, "forward", "startup", NULL);
+        debug_print("startup:%s", startup);
+        if (strcmp(startup, "true")==0){
+            gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(g_startup), TRUE);
+        }
+        gchar *to=g_key_file_get_string (g_keyfile, "forward", "to", NULL);
+        gtk_entry_set_text(GTK_ENTRY(g_address), to);
     }
-    gchar *to=g_key_file_get_string (g_keyfile, "forward", "to", NULL);
-    gtk_entry_set_text(GTK_ENTRY(g_address), to);
     g_free(rcpath);
 
     gtk_widget_show(window);
