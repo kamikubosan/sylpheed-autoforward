@@ -150,9 +150,22 @@ static void prefs_ok_cb(GtkWidget *widget, gpointer data)
 	gchar *rcpath = g_strconcat(get_rc_dir(), G_DIR_SEPARATOR_S, "autoforwardrc", NULL);
     g_keyfile = g_key_file_new();
     g_key_file_load_from_file(g_keyfile, rcpath, G_KEY_FILE_KEEP_COMMENTS, NULL);
-    gchar *startup=g_key_file_get_string (g_keyfile, "forward", "startup", NULL);
-    debug_print("startup:%s", startup);
+
+    gchar *address = gtk_entry_get_text(GTK_ENTRY(g_address));
+    if (address!=NULL){
+        g_key_file_set_string (g_keyfile, "forward", "to", address);
+    }
+    gboolean startup = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(g_startup));
+    g_key_file_set_boolean (g_keyfile, "forward", "startup", startup);
+    debug_print("startup:%d\n", startup);
+
+    /**/
+    gsize sz;
+    gchar *buf=g_key_file_to_data(g_keyfile, &sz, NULL);
+    g_file_set_contents(rcpath, buf, sz, NULL);
+    
 	g_free(rcpath);
+
     gtk_widget_destroy(GTK_WIDGET(data));
 }
 static void prefs_cancel_cb(GtkWidget *widget, gpointer data)
