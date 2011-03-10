@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: autoforward\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-03-07 11:59+0900\n"
+"POT-Creation-Date: 2011-03-10 12:23+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <kenhys@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,34 +16,45 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: autoforward.c:43
+#: autoforward.c:48 autoforward.c:74 autoforward.c:75
 msgid "Auto mail forward Plug-in"
 msgstr "メール転送プラグイン"
 
-#: autoforward.c:46
+#: autoforward.c:49
 msgid "Automatically forwarding mail plug-in for Sylpheed"
 msgstr "メール転送プラグイン for Sylpheed"
 
-#: autoforward.c:62
-msgid "Toggle autoforward"
-msgstr "転送有効/無効切り替え"
+#: autoforward.c:78 autoforward.c:204
+msgid "Autoforward Settings"
+msgstr "メール転送設定"
 
-#: autoforward.c:116 autoforward.c:125
+#: autoforward.c:126 autoforward.c:256
+msgid "Autoforward is enabled. Click the icon to disable plugin."
+msgstr ""
+"転送プラグインを有効化しました。無効化するにはアイコンをクリックして下さい。"
+
+#: autoforward.c:216
+msgid "Forward to(E-mail):"
+msgstr "転送先メールアドレス:"
+
+#: autoforward.c:225
+msgid "Enable plugin on startup."
+msgstr "メール転送を起動時に有効化"
+
+#: autoforward.c:250 autoforward.c:259
 msgid "Autoforward"
 msgstr "転送"
 
-#: autoforward.c:116
+#: autoforward.c:250
 msgid "autoforward plugin is enabled."
 msgstr "転送プラグインを有効化しました。"
 
-#: autoforward.c:122
-msgid "Autoforward is enabled. Click the icon to disable plugin."
-msgstr "転送プラグインを有効化しました。無効化するにはアイコンをクリックして下さい。"
-
-#: autoforward.c:125
+#: autoforward.c:259
 msgid "autoforward plugin is disabled."
 msgstr "転送プラグインを無効化しました。"
 
-#: autoforward.c:131
+#: autoforward.c:265
 msgid "Autoforward is disabled. Click the icon to enable plugin."
-msgstr "転送プラグインを無効化しました。有効化するにはアイコンをクリックして下さい。"
+msgstr ""
+"転送プラグインを無効化しました。有効化するにはアイコンをクリックして下さい。"
+

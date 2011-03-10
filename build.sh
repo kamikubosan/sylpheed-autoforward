@@ -27,7 +27,7 @@ if [ ! -z "$1" ]; then
           com="xgettext autoforward.c -k_ -kN_ -o po/autoforward.pot"
           ;;
       po)
-          com="msgmerge po/ja.po po/autoforward.pot -o po/new.po"
+          com="msgmerge po/ja.po po/autoforward.pot -o po/ja.po"
           ;;
       mo)
           com="msgfmt po/ja.po -o po/autoforward.mo"

@@ -45,8 +45,9 @@
 #define N_(String) gettext_noop(String)
 #define gettext_noop(String) (String)
 
-#define PLUGIN_NAME "Auto mail forward Plug-in"
-#define PLUGIN_DESC "Automatically forwarding mail plug-in for Sylpheed"
+#define PLUGIN_NAME N_("Auto mail forward Plug-in")
+#define PLUGIN_DESC N_("Automatically forwarding mail plug-in for Sylpheed")
+
 static SylPluginInfo info = {
 	N_(PLUGIN_NAME),
 	"0.5.0",
@@ -58,6 +59,7 @@ static gboolean g_enable = FALSE;
 
 static void exec_autoforward_cb(GObject *obj, FolderItem *item, const gchar *file, guint num);
 static void exec_autoforward_menu_cb(void);
+static void exec_autoforward_onoff_cb(void);
 
 static GtkWidget *g_plugin_on = NULL;
 static GtkWidget *g_plugin_off = NULL;
@@ -73,7 +75,7 @@ void plugin_load(void)
   debug_print(dgettext("autoforward", "Auto mail forward Plug-in"));
 
   syl_plugin_add_menuitem("/Tools", NULL, NULL, NULL);
-  syl_plugin_add_menuitem("/Tools", _("Toggle autoforward"), exec_autoforward_menu_cb, NULL);
+  syl_plugin_add_menuitem("/Tools", _("Autoforward Settings"), exec_autoforward_menu_cb, NULL);
 
   g_signal_connect(syl_app_get(), "add-msg", G_CALLBACK(exec_autoforward_cb), NULL);
 
@@ -101,7 +103,7 @@ void plugin_load(void)
 
     gtk_container_add(GTK_CONTAINER(g_onoff_switch), plugin_box);
 	g_signal_connect(G_OBJECT(g_onoff_switch), "clicked",
-                     G_CALLBACK(exec_autoforward_menu_cb), mainwin);
+                     G_CALLBACK(exec_autoforward_onoff_cb), mainwin);
 	gtk_box_pack_start(GTK_BOX(statusbar), g_onoff_switch, FALSE, FALSE, 0);
 
     gtk_widget_show_all(g_onoff_switch);
@@ -140,7 +142,108 @@ gint plugin_interface_version(void)
 	return SYL_PLUGIN_INTERFACE_VERSION;
 }
 
+static GtkWidget *g_address;
+static GtkWidget *g_startup;
+
+static void prefs_ok_cb(GtkWidget *widget, gpointer data)
+{
+	gchar *rcpath = g_strconcat(get_rc_dir(), G_DIR_SEPARATOR_S, "autoforwardrc", NULL);
+    g_keyfile = g_key_file_new();
+    g_key_file_load_from_file(g_keyfile, rcpath, G_KEY_FILE_KEEP_COMMENTS, NULL);
+    gchar *startup=g_key_file_get_string (g_keyfile, "forward", "startup", NULL);
+    debug_print("startup:%s", startup);
+	g_free(rcpath);
+    gtk_widget_destroy(GTK_WIDGET(data));
+}
+static void prefs_cancel_cb(GtkWidget *widget, gpointer data)
+{
+    gtk_widget_destroy(GTK_WIDGET(data));
+}
+
 static void exec_autoforward_menu_cb(void)
+{
+    /* show modal dialog */
+    GtkWidget *window;
+    GtkWidget *vbox;
+    GtkWidget *confirm_area;
+    GtkWidget *ok_btn;
+    GtkWidget *cancel_btn;
+
+    window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+	gtk_container_set_border_width(GTK_CONTAINER(window), 8);
+	/*gtk_widget_set_size_request(window, 200, 100);*/
+	gtk_window_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
+	gtk_window_set_modal(GTK_WINDOW(window), TRUE);
+	gtk_window_set_policy(GTK_WINDOW(window), FALSE, TRUE, FALSE);
+	gtk_widget_realize(window);
+
+    vbox = gtk_vbox_new(FALSE, 6);
+	gtk_widget_show(vbox);
+	gtk_container_add(GTK_CONTAINER(window), vbox);
+
+	confirm_area = gtk_hbutton_box_new();
+	gtk_button_box_set_layout(GTK_BUTTON_BOX(confirm_area), GTK_BUTTONBOX_END);
+	gtk_box_set_spacing(GTK_BOX(confirm_area), 6);
+
+
+    ok_btn = gtk_button_new_from_stock(GTK_STOCK_OK);
+    GTK_WIDGET_SET_FLAGS(ok_btn, GTK_CAN_DEFAULT);
+    gtk_box_pack_start(GTK_BOX(confirm_area), ok_btn, FALSE, FALSE, 0);
+    gtk_widget_show(ok_btn);
+
+    cancel_btn = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
+    GTK_WIDGET_SET_FLAGS(cancel_btn, GTK_CAN_DEFAULT);
+    gtk_box_pack_start(GTK_BOX(confirm_area), cancel_btn, FALSE, FALSE, 0);
+    gtk_widget_show(cancel_btn);
+
+    gtk_widget_show(confirm_area);
+	
+    gtk_box_pack_end(GTK_BOX(vbox), confirm_area, FALSE, FALSE, 0);
+	gtk_widget_grab_default(ok_btn);
+
+    gtk_window_set_title(GTK_WINDOW(window), _("Autoforward Settings"));
+
+    g_signal_connect(G_OBJECT(ok_btn), "clicked",
+                     G_CALLBACK(prefs_ok_cb), window);
+	g_signal_connect(G_OBJECT(cancel_btn), "clicked",
+                     G_CALLBACK(prefs_cancel_cb), window);
+
+	/* email settings */
+    GtkWidget *hbox = gtk_hbox_new(FALSE, 6);
+	gtk_widget_show(hbox);
+	gtk_container_add(GTK_CONTAINER(vbox), hbox);
+
+    GtkWidget *label = gtk_label_new(_("Forward to(E-mail):"));
+	gtk_widget_show(label);
+	gtk_box_pack_start(GTK_BOX(hbox), label, TRUE, TRUE, 0);
+
+    g_address = gtk_entry_new();
+    gtk_widget_show(g_address);
+	gtk_box_pack_start(GTK_BOX(hbox), g_address, TRUE, TRUE, 0);
+
+	/* email settings */
+	g_startup = gtk_check_button_new_with_label(_("Enable plugin on startup."));
+	gtk_widget_show(g_startup);
+	gtk_box_pack_start(GTK_BOX(vbox), g_startup, FALSE, FALSE, 0);
+
+    /* load settings */
+    gchar *rcpath = g_strconcat(get_rc_dir(), G_DIR_SEPARATOR_S, "autoforwardrc", NULL);
+    g_keyfile = g_key_file_new();
+    g_key_file_load_from_file(g_keyfile, rcpath, G_KEY_FILE_KEEP_COMMENTS, NULL);
+    gchar *startup=g_key_file_get_string (g_keyfile, "forward", "startup", NULL);
+    debug_print("startup:%s", startup);
+    if (strcmp(startup, "true")==0){
+        gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(g_startup), TRUE);
+    }
+    gchar *to=g_key_file_get_string (g_keyfile, "forward", "to", NULL);
+    gtk_entry_set_text(GTK_ENTRY(g_address), to);
+    g_free(rcpath);
+
+    gtk_widget_show(window);
+}
+
+
+static void exec_autoforward_onoff_cb(void)
 {
 
     if (g_enable != TRUE){
