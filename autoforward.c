@@ -336,7 +336,11 @@ void exec_autoforward_cb(GObject *obj, FolderItem *item, const gchar *file, guin
     
     PrefsAccount *ac = (PrefsAccount*)account_get_default();
     g_return_if_fail(ac != NULL);
-    
+
+    /* check item->path for filter */
+    g_print("%s\n", item->name);
+    g_print("%s\n", item->path);
+
     syl_plugin_send_message_set_forward_flags(ac->address);
 
 	FILE *fp;
@@ -346,30 +350,30 @@ void exec_autoforward_cb(GObject *obj, FolderItem *item, const gchar *file, guin
     gchar buf[PREFSBUFSIZE];
 	rcpath = g_strconcat(get_rc_dir(), G_DIR_SEPARATOR_S, "autoforwardrc", NULL);
 
-#if 0
-	if ((fp = g_fopen(rcpath, "rb")) == NULL) {
-		if (ENOENT != errno) FILE_OP_ERROR(rcpath, "fopen");
-		g_free(rcpath);
-		return;
-	}
-	g_free(rcpath);
-
-    while (fgets(buf, sizeof(buf), fp) != NULL) {
-		g_strstrip(buf);
-		if (buf[0] == '\0') continue;
-        to_list = address_list_append(to_list, buf);
-	}
-	fclose(fp);
-#else
-
     g_keyfile = g_key_file_new();
     g_key_file_load_from_file(g_keyfile, rcpath, G_KEY_FILE_KEEP_COMMENTS, NULL);
     gchar *to=g_key_file_get_string (g_keyfile, "forward", "to", NULL);
     debug_print("to:%s", to);
     to_list = address_list_append(to_list, to);
-	g_free(rcpath);
-#endif
+
+    gsize gz=0;
+    gchar **folders = g_key_file_get_string_list(g_keyfile, "forward", "folder", &gz, NULL);
+    gboolean bmatch = FALSE;
+    if (gz != 0) {
+        /* match or not */
+        int nindex = 0;
+        for (nindex = 0; nindex < gz; nindex++){
+            if (memcmp(folders[nindex], item->path, strlen(folders[nindex])) == 0){
+                bmatch = TRUE;
+            }
+        }
+    } else {
+        bmatch = TRUE;
+    }
+    g_free(rcpath);
     g_return_if_fail(to_list != NULL);
 
+    g_return_if_fail(bmatch == TRUE);
+    
     syl_plugin_send_message(file, ac, to_list);
 }
