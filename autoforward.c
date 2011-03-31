@@ -145,6 +145,8 @@ gint plugin_interface_version(void)
 
 static GtkWidget *g_address;
 static GtkWidget *g_startup;
+static GtkWidget *g_from;
+static GtkWidget *g_to;
 
 static void prefs_ok_cb(GtkWidget *widget, gpointer data)
 {
@@ -240,6 +242,42 @@ static void exec_autoforward_menu_cb(void)
 	gtk_widget_show(g_startup);
 	gtk_box_pack_start(GTK_BOX(vbox), g_startup, FALSE, FALSE, 0);
 
+    /* From & To frame */
+    GtkWidget *frame = gtk_frame_new(_("Forward condition:"));
+	gtk_widget_show(frame);
+	gtk_box_pack_start(GTK_BOX(vbox), frame, FALSE, FALSE, 0);
+    
+    GtkWidget *vbox2 = gtk_vbox_new(FALSE, 6);
+	gtk_widget_show(vbox2);
+	gtk_container_add(GTK_CONTAINER(frame), vbox2);
+
+    /* From: */
+    hbox = gtk_hbox_new(FALSE, 6);
+	gtk_widget_show(hbox);
+	gtk_container_add(GTK_CONTAINER(vbox2), hbox);
+
+    label = gtk_label_new(_("From:"));
+	gtk_widget_show(label);
+	gtk_box_pack_start(GTK_BOX(hbox), label, TRUE, TRUE, 0);
+
+    g_from = gtk_entry_new();
+    gtk_widget_show(g_from);
+	gtk_box_pack_start(GTK_BOX(hbox), g_from, TRUE, TRUE, 0);
+
+    /* To: */
+    hbox = gtk_hbox_new(FALSE, 6);
+	gtk_widget_show(hbox);
+	gtk_container_add(GTK_CONTAINER(vbox2), hbox);
+
+    label = gtk_label_new(_("  To:"));
+	gtk_widget_show(label);
+	gtk_box_pack_start(GTK_BOX(hbox), label, TRUE, TRUE, 0);
+
+    g_to = gtk_entry_new();
+    gtk_widget_show(g_to);
+	gtk_box_pack_start(GTK_BOX(hbox), g_to, TRUE, TRUE, 0);
+
+    
     /* load settings */
     gchar *rcpath = g_strconcat(get_rc_dir(), G_DIR_SEPARATOR_S, "autoforwardrc", NULL);
     g_keyfile = g_key_file_new();
