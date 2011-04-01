@@ -227,56 +227,83 @@ static void exec_autoforward_menu_cb(void)
 	/* email settings */
     GtkWidget *hbox = gtk_hbox_new(FALSE, 6);
 	gtk_widget_show(hbox);
-	gtk_container_add(GTK_CONTAINER(vbox), hbox);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 
     GtkWidget *label = gtk_label_new(_("Forward to(E-mail):"));
 	gtk_widget_show(label);
-	gtk_box_pack_start(GTK_BOX(hbox), label, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 
     g_address = gtk_entry_new();
     gtk_widget_show(g_address);
-	gtk_box_pack_start(GTK_BOX(hbox), g_address, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(hbox), g_address, FALSE, TRUE, 0);
 
 	/* email settings */
-	g_startup = gtk_check_button_new_with_label(_("Enable plugin on startup."));
+	g_startup = gtk_check_button_new_with_label(_("Enable plugin on startup"));
 	gtk_widget_show(g_startup);
 	gtk_box_pack_start(GTK_BOX(vbox), g_startup, FALSE, FALSE, 0);
 
-    /* From & To frame */
+    /* all */
+    GtkWidget *radio1 = gtk_radio_button_new_with_label(NULL, _("Forward all mail"));
+    /* folder filtered */
+    GtkWidget *radio2 = gtk_radio_button_new_with_label_from_widget (GTK_RADIO_BUTTON (radio1),
+                                                                     _("Forward mail in folder"));
+
     GtkWidget *frame = gtk_frame_new(_("Forward condition:"));
 	gtk_widget_show(frame);
-	gtk_box_pack_start(GTK_BOX(vbox), frame, FALSE, FALSE, 0);
+	gtk_container_add(GTK_CONTAINER(vbox), frame);
     
-    GtkWidget *vbox2 = gtk_vbox_new(FALSE, 6);
-	gtk_widget_show(vbox2);
-	gtk_container_add(GTK_CONTAINER(frame), vbox2);
+    GtkWidget *vbox_cond = gtk_vbox_new(FALSE, 6);
+	gtk_widget_show(vbox_cond);
+	gtk_container_add(GTK_CONTAINER(frame), vbox_cond);
+    
+    gtk_box_pack_start(GTK_BOX(vbox_cond), radio1, FALSE, FALSE, 6);
+    gtk_box_pack_start(GTK_BOX(vbox_cond), radio2, FALSE, FALSE, 6);
 
-    /* From: */
-    hbox = gtk_hbox_new(FALSE, 6);
-	gtk_widget_show(hbox);
-	gtk_container_add(GTK_CONTAINER(vbox2), hbox);
+    /* treeview */
+    GtkListStore *store = gtk_list_store_new(1, G_TYPE_STRING);
+   GtkTreeIter iter;
+   gtk_list_store_append(store, &iter);
+   gtk_list_store_set(store, &iter, 0, "foo", -1);
 
-    label = gtk_label_new(_("From:"));
-	gtk_widget_show(label);
-	gtk_box_pack_start(GTK_BOX(hbox), label, TRUE, TRUE, 0);
+   gtk_list_store_append(store, &iter);
+   gtk_list_store_set(store, &iter, 0, "bar", -1);
 
-    g_from = gtk_entry_new();
-    gtk_widget_show(g_from);
-	gtk_box_pack_start(GTK_BOX(hbox), g_from, TRUE, TRUE, 0);
+   gtk_list_store_append(store, &iter);
+   gtk_list_store_set(store, &iter, 0, "bar", -1);
 
-    /* To: */
-    hbox = gtk_hbox_new(FALSE, 6);
-	gtk_widget_show(hbox);
-	gtk_container_add(GTK_CONTAINER(vbox2), hbox);
+      gtk_list_store_append(store, &iter);
+   gtk_list_store_set(store, &iter, 0, "bar", -1);
 
-    label = gtk_label_new(_("  To:"));
-	gtk_widget_show(label);
-	gtk_box_pack_start(GTK_BOX(hbox), label, TRUE, TRUE, 0);
+   gtk_list_store_append(store, &iter);
+   gtk_list_store_set(store, &iter, 0, "bar", -1);
 
-    g_to = gtk_entry_new();
-    gtk_widget_show(g_to);
-	gtk_box_pack_start(GTK_BOX(hbox), g_to, TRUE, TRUE, 0);
+   GtkTreeViewColumn *column = gtk_tree_view_column_new_with_attributes ("Forward mail in following folder:",
+                                                    gtk_cell_renderer_text_new (),
+                                                    "text", 0,
+                                                    NULL);
+   GtkWidget *view=gtk_tree_view_new_with_model(GTK_TREE_MODEL(store));
+   gtk_tree_view_append_column (GTK_TREE_VIEW (view), column);
+   GtkWidget *sw = gtk_scrolled_window_new (NULL, NULL);
+   gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (sw), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+   gtk_container_add (GTK_CONTAINER (sw), view);
+   gtk_box_pack_start (GTK_BOX(vbox_cond), sw, TRUE, TRUE, 2);
 
+
+
+
+    /* add and delete */
+    GtkWidget *bbox = gtk_hbutton_box_new();
+    gtk_button_box_set_layout(GTK_BUTTON_BOX(bbox), GTK_BUTTONBOX_END);
+    gtk_box_set_spacing(GTK_BOX(bbox), 6);
+    GtkWidget *btn_add = gtk_button_new_from_stock(GTK_STOCK_ADD);
+    GtkWidget *btn_delete = gtk_button_new_from_stock(GTK_STOCK_DELETE);
+
+    gtk_box_pack_start(GTK_BOX(bbox), btn_add, FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(bbox), btn_delete, FALSE, FALSE, 0);
+    gtk_widget_show_all(bbox);
+    
+    gtk_box_pack_end(GTK_BOX(vbox_cond), bbox, FALSE, FALSE, 6);
+    gtk_widget_show_all(vbox_cond);
     
     /* load settings */
     gchar *rcpath = g_strconcat(get_rc_dir(), G_DIR_SEPARATOR_S, "autoforwardrc", NULL);

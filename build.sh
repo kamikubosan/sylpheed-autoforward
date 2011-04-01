@@ -32,6 +32,17 @@ if [ ! -z "$1" ]; then
       mo)
           com="msgfmt po/ja.po -o po/autoforward.mo"
           ;;
+      ui)
+          com="gcc -o testui.exe testui.c $INC -L./lib $LIBSYLPH $LIBSYLPHEED $LIBS"
+          ;;
+      release)
+          zip sylpheed-autoforward-$2.zip autoforward.dll
+          zip -r sylpheed-autoforward-$2.zip README.ja.txt
+          zip -r sylpheed-autoforward-$2.zip autoforward.c
+          zip -r sylpheed-autoforward-$2.zip po/autoforward.mo
+          zip -r sylpheed-autoforward-$2.zip *.xpm
+          
+          ;;
   esac
   echo $com
   eval $com
