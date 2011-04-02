@@ -33,6 +33,7 @@
 #include "utils.h"
 #include "alertpanel.h"
 #include "prefs_common.h"
+#include "foldersel.h"
 #include "online.xpm"
 #include "offline.xpm"
 
@@ -50,7 +51,7 @@
 
 static SylPluginInfo info = {
 	N_(PLUGIN_NAME),
-	"0.5.0",
+	"0.6.0",
 	"HAYASHI Kentaro",
 	N_(PLUGIN_DESC)
 };
@@ -65,7 +66,17 @@ static GtkWidget *g_plugin_on = NULL;
 static GtkWidget *g_plugin_off = NULL;
 static GtkWidget *g_onoff_switch = NULL;
 static GtkTooltips *g_tooltip = NULL;
+
 static GKeyFile *g_keyfile=NULL;
+
+static GtkWidget *g_address;
+static gboolean g_startup_flg = FALSE;
+static GtkWidget *g_startup = NULL;
+static gboolean g_forward_flg = TRUE;
+static GtkListStore *g_folders = NULL;
+static GtkWidget *g_add_btn;
+static GtkWidget *g_delete_btn;
+
 
 void plugin_load(void)
 {
@@ -80,53 +91,52 @@ void plugin_load(void)
   g_signal_connect(syl_app_get(), "add-msg", G_CALLBACK(exec_autoforward_cb), NULL);
 
   GtkWidget *mainwin = syl_plugin_main_window_get();
-    GtkWidget *statusbar = syl_plugin_main_window_get_statusbar();
-    GtkWidget *plugin_box = gtk_hbox_new(FALSE, 0);
+  GtkWidget *statusbar = syl_plugin_main_window_get_statusbar();
+  GtkWidget *plugin_box = gtk_hbox_new(FALSE, 0);
 
-    GdkPixbuf* on_pixbuf = gdk_pixbuf_new_from_xpm_data((const char**)online_xpm);
-    g_plugin_on=gtk_image_new_from_pixbuf(on_pixbuf);
-    /*g_plugin_on = gtk_label_new(_("AF ON"));*/
+  GdkPixbuf* on_pixbuf = gdk_pixbuf_new_from_xpm_data((const char**)online_xpm);
+  g_plugin_on=gtk_image_new_from_pixbuf(on_pixbuf);
     
-    GdkPixbuf* off_pixbuf = gdk_pixbuf_new_from_xpm_data((const char**)offline_xpm);
-    g_plugin_off=gtk_image_new_from_pixbuf(off_pixbuf);
-    /*g_plugin_off = gtk_label_new(_("AF OFF"));*/
+  GdkPixbuf* off_pixbuf = gdk_pixbuf_new_from_xpm_data((const char**)offline_xpm);
+  g_plugin_off=gtk_image_new_from_pixbuf(off_pixbuf);
 
-    gtk_box_pack_start(GTK_BOX(plugin_box), g_plugin_on, FALSE, FALSE, 0);
-    gtk_box_pack_start(GTK_BOX(plugin_box), g_plugin_off, FALSE, FALSE, 0);
+  gtk_box_pack_start(GTK_BOX(plugin_box), g_plugin_on, FALSE, FALSE, 0);
+  gtk_box_pack_start(GTK_BOX(plugin_box), g_plugin_off, FALSE, FALSE, 0);
     
-    g_tooltip = gtk_tooltips_new();
+  g_tooltip = gtk_tooltips_new();
     
-    g_onoff_switch = gtk_button_new();
-    gtk_button_set_relief(GTK_BUTTON(g_onoff_switch), GTK_RELIEF_NONE);
-	GTK_WIDGET_UNSET_FLAGS(g_onoff_switch, GTK_CAN_FOCUS);
-	gtk_widget_set_size_request(g_onoff_switch, 20, 20);
+  g_onoff_switch = gtk_button_new();
+  gtk_button_set_relief(GTK_BUTTON(g_onoff_switch), GTK_RELIEF_NONE);
+  GTK_WIDGET_UNSET_FLAGS(g_onoff_switch, GTK_CAN_FOCUS);
+  gtk_widget_set_size_request(g_onoff_switch, 20, 20);
 
-    gtk_container_add(GTK_CONTAINER(g_onoff_switch), plugin_box);
-	g_signal_connect(G_OBJECT(g_onoff_switch), "clicked",
-                     G_CALLBACK(exec_autoforward_onoff_cb), mainwin);
-	gtk_box_pack_start(GTK_BOX(statusbar), g_onoff_switch, FALSE, FALSE, 0);
+  gtk_container_add(GTK_CONTAINER(g_onoff_switch), plugin_box);
+  g_signal_connect(G_OBJECT(g_onoff_switch), "clicked",
+                   G_CALLBACK(exec_autoforward_onoff_cb), mainwin);
+  gtk_box_pack_start(GTK_BOX(statusbar), g_onoff_switch, FALSE, FALSE, 0);
 
-    gtk_widget_show_all(g_onoff_switch);
-    gtk_widget_hide(g_plugin_on);
-    info.name = g_strdup(_(PLUGIN_NAME));
-    info.description = g_strdup(_(PLUGIN_DESC));
+  gtk_widget_show_all(g_onoff_switch);
+  gtk_widget_hide(g_plugin_on);
+  info.name = g_strdup(_(PLUGIN_NAME));
+  info.description = g_strdup(_(PLUGIN_DESC));
 
-	gchar *rcpath = g_strconcat(get_rc_dir(), G_DIR_SEPARATOR_S, "autoforwardrc", NULL);
-    g_keyfile = g_key_file_new();
-    if (g_key_file_load_from_file(g_keyfile, rcpath, G_KEY_FILE_KEEP_COMMENTS, NULL)){
-        gchar *startup=g_key_file_get_string (g_keyfile, "forward", "startup", NULL);
-        debug_print("startup:%s", startup);
-        g_free(rcpath);
-        if (strcmp("true", startup)==0){
-            g_enable=TRUE;
-            gtk_widget_hide(g_plugin_off);
-            gtk_widget_show(g_plugin_on);
-            gtk_tooltips_set_tip
-                (g_tooltip, g_onoff_switch,
-                 _("Autoforward is enabled. Click the icon to disable plugin."),
-                 NULL);
-        }
+  gchar *rcpath = g_strconcat(get_rc_dir(), G_DIR_SEPARATOR_S, "autoforwardrc", NULL);
+  g_keyfile = g_key_file_new();
+  if (g_key_file_load_from_file(g_keyfile, rcpath, G_KEY_FILE_KEEP_COMMENTS, NULL)){
+    gboolean startup=g_key_file_get_boolean (g_keyfile, "forward", "startup", NULL);
+    debug_print("startup:%s", startup ? "true" : "false");
+
+    if (startup){
+      g_enable=TRUE;
+      gtk_widget_hide(g_plugin_off);
+      gtk_widget_show(g_plugin_on);
+      gtk_tooltips_set_tip(g_tooltip, g_onoff_switch,
+                           _("Autoforward is enabled. Click the icon to disable plugin."),
+                           NULL);
     }
+      
+    g_free(rcpath);
+  }
 }
 
 void plugin_unload(void)
@@ -143,11 +153,6 @@ gint plugin_interface_version(void)
 	return SYL_PLUGIN_INTERFACE_VERSION;
 }
 
-static GtkWidget *g_address;
-static GtkWidget *g_startup;
-static GtkWidget *g_from;
-static GtkWidget *g_to;
-
 static void prefs_ok_cb(GtkWidget *widget, gpointer data)
 {
 	gchar *rcpath = g_strconcat(get_rc_dir(), G_DIR_SEPARATOR_S, "autoforwardrc", NULL);
@@ -160,9 +165,34 @@ static void prefs_ok_cb(GtkWidget *widget, gpointer data)
     }
     gboolean startup = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(g_startup));
     g_key_file_set_boolean (g_keyfile, "forward", "startup", startup);
-    debug_print("startup:%d\n", startup);
+    debug_print("startup:%s\n", startup ? "true" : "false");
+
+    g_key_file_set_boolean (g_keyfile, "forward", "all", g_forward_flg);
+    debug_print("forward all:%s\n", g_forward_flg ? "true" : "false");
 
     /**/
+    GtkTreeModel *model;
+    model = GTK_TREE_MODEL(g_folders);
+    gint nfolder = gtk_tree_model_iter_n_children(model, NULL);
+    if (nfolder > 0){
+      GError *errval;
+      gchar **folders = malloc(sizeof(gchar*)*nfolder);
+      GtkTreeIter iter;
+      gboolean valid;
+      int nindex = 0;
+      for (valid = gtk_tree_model_get_iter_first(model, &iter); valid;
+           valid = gtk_tree_model_iter_next(model, &iter)) {
+        gchar *folder;
+        gtk_tree_model_get(model, &iter, 0, &folder, -1);
+        folders[nindex] = folder;
+        g_print("%d:%s\n", nindex, folder);
+        nindex++;
+      }
+      g_key_file_set_string_list(g_keyfile, "forward", "folder", folders, nfolder);
+    }else{
+      g_key_file_remove_key(g_keyfile, "forward", "folder", NULL);
+    }
+    
     gsize sz;
     gchar *buf=g_key_file_to_data(g_keyfile, &sz, NULL);
     g_file_set_contents(rcpath, buf, sz, NULL);
@@ -174,6 +204,89 @@ static void prefs_ok_cb(GtkWidget *widget, gpointer data)
 static void prefs_cancel_cb(GtkWidget *widget, gpointer data)
 {
     gtk_widget_destroy(GTK_WIDGET(data));
+}
+
+static void add_mail_folder_cb( GtkWidget *widget,
+                                gpointer   data )
+{
+  FolderItem *dest = syl_plugin_folder_sel(NULL, FOLDER_SEL_COPY, NULL);
+  if (!dest || !dest->path){
+    return;
+  }
+  /**/
+  GtkTreeView *view = GTK_TREE_VIEW(data);
+    
+  GtkTreeModel *model = gtk_tree_view_get_model(view);
+  GtkTreeIter iter;
+   
+  g_folders = GTK_LIST_STORE ( model );
+
+  gtk_list_store_append(g_folders, &iter);
+  gtk_list_store_set(g_folders, &iter, 0, dest->path, -1);
+}
+
+static void forward_mail_all_cb( GtkButton *widget,
+                     gpointer   data )
+{
+  g_forward_flg = TRUE;
+
+  gtk_widget_set_sensitive(GTK_WIDGET(data), FALSE);
+  gtk_widget_set_sensitive(GTK_WIDGET(g_add_btn), FALSE);
+  gtk_widget_set_sensitive(GTK_WIDGET(g_delete_btn), FALSE);
+  
+}
+
+static void forward_mail_folder_cb( GtkButton *widget,
+                                    gpointer   data )
+{
+  g_forward_flg = FALSE;
+
+  gtk_widget_set_sensitive(GTK_WIDGET(data), TRUE);
+  gtk_widget_set_sensitive(GTK_WIDGET(g_add_btn), TRUE);
+  gtk_widget_set_sensitive(GTK_WIDGET(g_delete_btn), TRUE);
+}
+
+static void delete_mail_folder_cb( GtkWidget *widget,
+                     gpointer   data )
+{
+  GtkTreeSelection *selection = gtk_tree_view_get_selection ( GTK_TREE_VIEW(data) );
+   GtkTreeModel *model;
+   GtkTreeIter iter;
+   
+   if (gtk_tree_selection_count_selected_rows(selection) == 0){
+     g_print("no selection\n");
+      return;
+   }
+   GList *list = gtk_tree_selection_get_selected_rows( selection, &model );
+   g_folders = GTK_LIST_STORE ( model );
+   
+   if (!list){
+     g_print("no list\n");
+     return;
+   }
+
+   int nRemoved = 0;
+   while(list) {
+      int ipath = atoi(gtk_tree_path_to_string(list->data));
+      ipath-=nRemoved;
+      GString *fixed_path = g_string_new("");
+      g_string_printf(fixed_path, "%d", ipath);
+      
+      GtkTreePath *path = gtk_tree_path_new_from_string(fixed_path->str);
+      g_string_free(fixed_path, TRUE);
+      
+      if (path) {
+         if ( gtk_tree_model_get_iter ( model, &iter, path) ) { 
+            gtk_list_store_remove (g_folders, &iter );
+            nRemoved++;   
+         }
+         gtk_tree_path_free (path);
+      }
+      list = list->next;
+   }
+   g_list_foreach (list, (GFunc)gtk_tree_path_free, NULL);
+
+   g_list_free (list);
 }
 
 static void exec_autoforward_menu_cb(void)
@@ -260,28 +373,14 @@ static void exec_autoforward_menu_cb(void)
     gtk_box_pack_start(GTK_BOX(vbox_cond), radio2, FALSE, FALSE, 6);
 
     /* treeview */
-    GtkListStore *store = gtk_list_store_new(1, G_TYPE_STRING);
-   GtkTreeIter iter;
-   gtk_list_store_append(store, &iter);
-   gtk_list_store_set(store, &iter, 0, "foo", -1);
+    g_folders = gtk_list_store_new(1, G_TYPE_STRING);
+    GtkTreeIter iter;
 
-   gtk_list_store_append(store, &iter);
-   gtk_list_store_set(store, &iter, 0, "bar", -1);
-
-   gtk_list_store_append(store, &iter);
-   gtk_list_store_set(store, &iter, 0, "bar", -1);
-
-      gtk_list_store_append(store, &iter);
-   gtk_list_store_set(store, &iter, 0, "bar", -1);
-
-   gtk_list_store_append(store, &iter);
-   gtk_list_store_set(store, &iter, 0, "bar", -1);
-
-   GtkTreeViewColumn *column = gtk_tree_view_column_new_with_attributes ("Forward mail in following folder:",
-                                                    gtk_cell_renderer_text_new (),
-                                                    "text", 0,
-                                                    NULL);
-   GtkWidget *view=gtk_tree_view_new_with_model(GTK_TREE_MODEL(store));
+   GtkTreeViewColumn *column = gtk_tree_view_column_new_with_attributes (_("Forward mail in following folder:"),
+                                                                         gtk_cell_renderer_text_new (),
+                                                                         "text", 0,
+                                                                         NULL);
+   GtkWidget *view=gtk_tree_view_new_with_model(GTK_TREE_MODEL(g_folders));
    gtk_tree_view_append_column (GTK_TREE_VIEW (view), column);
    GtkWidget *sw = gtk_scrolled_window_new (NULL, NULL);
    gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (sw), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
@@ -289,33 +388,73 @@ static void exec_autoforward_menu_cb(void)
    gtk_box_pack_start (GTK_BOX(vbox_cond), sw, TRUE, TRUE, 2);
 
 
-
-
     /* add and delete */
     GtkWidget *bbox = gtk_hbutton_box_new();
     gtk_button_box_set_layout(GTK_BUTTON_BOX(bbox), GTK_BUTTONBOX_END);
     gtk_box_set_spacing(GTK_BOX(bbox), 6);
-    GtkWidget *btn_add = gtk_button_new_from_stock(GTK_STOCK_ADD);
-    GtkWidget *btn_delete = gtk_button_new_from_stock(GTK_STOCK_DELETE);
+    g_add_btn = gtk_button_new_from_stock(GTK_STOCK_ADD);
+    g_delete_btn = gtk_button_new_from_stock(GTK_STOCK_DELETE);
 
-    gtk_box_pack_start(GTK_BOX(bbox), btn_add, FALSE, FALSE, 0);
-    gtk_box_pack_start(GTK_BOX(bbox), btn_delete, FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(bbox), g_add_btn, FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(bbox), g_delete_btn, FALSE, FALSE, 0);
     gtk_widget_show_all(bbox);
     
     gtk_box_pack_end(GTK_BOX(vbox_cond), bbox, FALSE, FALSE, 6);
     gtk_widget_show_all(vbox_cond);
     
+
+    g_signal_connect (g_add_btn, "clicked",
+                      G_CALLBACK (add_mail_folder_cb), view);
+
+    g_signal_connect (g_delete_btn, "clicked",
+		      G_CALLBACK (delete_mail_folder_cb), view);
+
+    g_signal_connect(GTK_BUTTON(radio1), "clicked",
+                     G_CALLBACK(forward_mail_all_cb), view);
+
+    g_signal_connect(GTK_BUTTON(radio2), "clicked",
+                     G_CALLBACK(forward_mail_folder_cb), view);
+
     /* load settings */
     gchar *rcpath = g_strconcat(get_rc_dir(), G_DIR_SEPARATOR_S, "autoforwardrc", NULL);
     g_keyfile = g_key_file_new();
     if (g_key_file_load_from_file(g_keyfile, rcpath, G_KEY_FILE_KEEP_COMMENTS, NULL)){
-        gchar *startup=g_key_file_get_string (g_keyfile, "forward", "startup", NULL);
-        debug_print("startup:%s", startup);
-        if (strcmp(startup, "true")==0){
-            gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(g_startup), TRUE);
+      g_startup_flg = g_key_file_get_boolean (g_keyfile, "forward", "startup", NULL);
+      debug_print("startup:%s\n", g_startup_flg ? "true" : "false");
+      if (g_startup_flg){
+        gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(g_startup), TRUE);
+      }
+      gchar *to=g_key_file_get_string (g_keyfile, "forward", "to", NULL);
+      gtk_entry_set_text(GTK_ENTRY(g_address), to);
+
+      g_forward_flg=g_key_file_get_boolean (g_keyfile, "forward", "all", NULL);
+      if (g_forward_flg){
+        gtk_widget_set_sensitive(GTK_WIDGET(view), FALSE);
+        gtk_widget_set_sensitive(GTK_WIDGET(g_add_btn), FALSE);
+        gtk_widget_set_sensitive(GTK_WIDGET(g_delete_btn), FALSE);
+      }else{
+        g_print("activate view and radio2\n");
+        gtk_widget_set_sensitive(GTK_WIDGET(view), TRUE);
+        gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(radio2), TRUE);
+      }
+      /**/
+      gsize sz=0;
+      GError *errval;
+      gchar **folders = g_key_file_get_string_list(g_keyfile, "forward", "folder", &sz, &errval);
+      if (folders!=NULL){
+        int nindex=0;
+        for (nindex = 0; nindex < sz; nindex++){
+          gtk_list_store_append(g_folders, &iter);
+          gtk_list_store_set(g_folders, &iter, 0, folders[nindex], -1);
         }
-        gchar *to=g_key_file_get_string (g_keyfile, "forward", "to", NULL);
-        gtk_entry_set_text(GTK_ENTRY(g_address), to);
+      }
+    }else{
+      /* default settings */
+      g_startup_flg = FALSE;
+      g_forward_flg = TRUE;
+      gtk_widget_set_sensitive(GTK_WIDGET(view), FALSE);
+      gtk_widget_set_sensitive(GTK_WIDGET(g_add_btn), FALSE);
+      gtk_widget_set_sensitive(GTK_WIDGET(g_delete_btn), FALSE);
     }
     g_free(rcpath);
 
@@ -370,11 +509,9 @@ void exec_autoforward_cb(GObject *obj, FolderItem *item, const gchar *file, guin
 
     syl_plugin_send_message_set_forward_flags(ac->address);
 
-	FILE *fp;
     gchar *rcpath;
     GSList* to_list=NULL;
 
-    gchar buf[PREFSBUFSIZE];
 	rcpath = g_strconcat(get_rc_dir(), G_DIR_SEPARATOR_S, "autoforwardrc", NULL);
 
     g_keyfile = g_key_file_new();
@@ -383,10 +520,25 @@ void exec_autoforward_cb(GObject *obj, FolderItem *item, const gchar *file, guin
     debug_print("to:%s", to);
     to_list = address_list_append(to_list, to);
 
+    GError *errval;
+    gboolean forward_all=g_key_file_get_boolean (g_keyfile, "forward", "all", &errval);
+    if (forward_all != TRUE){
+      switch (errval->code){
+      case G_KEY_FILE_ERROR_INVALID_VALUE:
+      case G_KEY_FILE_ERROR_KEY_NOT_FOUND:
+        forward_all=TRUE;
+        break;
+      default:
+        break;
+      }
+    }
+    
     gsize gz=0;
-    gchar **folders = g_key_file_get_string_list(g_keyfile, "forward", "folder", &gz, NULL);
+    gchar **folders;
     gboolean bmatch = FALSE;
-    if (gz != 0) {
+    if (forward_all != TRUE){
+      folders = g_key_file_get_string_list(g_keyfile, "forward", "folder", &gz, NULL);
+      if (gz != 0) {
         /* match or not */
         int nindex = 0;
         for (nindex = 0; nindex < gz; nindex++){
@@ -394,8 +546,11 @@ void exec_autoforward_cb(GObject *obj, FolderItem *item, const gchar *file, guin
                 bmatch = TRUE;
             }
         }
-    } else {
-        bmatch = TRUE;
+      } else {
+        bmatch = FALSE;
+      }
+    }else{
+      bmatch = TRUE;
     }
     g_free(rcpath);
     g_return_if_fail(to_list != NULL);
