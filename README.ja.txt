@@ -6,7 +6,7 @@
 動作環境
 --------------------------------------------------------------------------------
 
-Windows XP SP3
+Windows XP SP3以降
 
 インストール方法
 --------------------------------------------------------------------------------
@@ -14,9 +14,16 @@ Windows XP SP3
 1. dllを配置
 
 autoforward.dllをSylpheedのプラグインディレクトリへとコピーします。
-Sylpheedのzipアーカイブならpluginsディレクトリへ配置するだけです。
+Sylpheedのzipアーカイブを利用している場合には、pluginsディレクトリへ配置するだけです。
 
-もしくは%APPDATA%/Sylpheed/plugins以下に配置します。
+インストーラにて導入している場合などは%APPDATA%/Sylpheed/plugins以下に配置します。
+
+XP環境では%APPDATA%/Sylpheed/pluginsは以下の場所になります。
+
+C:\Documents and Settings\(ユーザ名)\Application Data\Sylpheed\plugins
+
+Windows 7環境では%APPDATA%/Sylpheed/pluginsは以下の場所になります。
+C:/Users/(ユーザ名)/AppData/Roaming/Sylpheed/plugins
 
 2. .moファイルの配置
 

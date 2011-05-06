@@ -86,7 +86,7 @@ void plugin_load(void)
   debug_print(dgettext("autoforward", "Auto mail forward Plug-in"));
 
   syl_plugin_add_menuitem("/Tools", NULL, NULL, NULL);
-  syl_plugin_add_menuitem("/Tools", _("Autoforward Settings"), exec_autoforward_menu_cb, NULL);
+  syl_plugin_add_menuitem("/Tools", _("Autoforward Settings [autoforward]"), exec_autoforward_menu_cb, NULL);
 
   g_signal_connect(syl_app_get(), "add-msg", G_CALLBACK(exec_autoforward_cb), NULL);
 
@@ -330,7 +330,7 @@ static void exec_autoforward_menu_cb(void)
     gtk_box_pack_end(GTK_BOX(vbox), confirm_area, FALSE, FALSE, 0);
 	gtk_widget_grab_default(ok_btn);
 
-    gtk_window_set_title(GTK_WINDOW(window), _("Autoforward Settings"));
+    gtk_window_set_title(GTK_WINDOW(window), _("Autoforward Settings [autoforward]"));
 
     g_signal_connect(G_OBJECT(ok_btn), "clicked",
                      G_CALLBACK(prefs_ok_cb), window);
@@ -542,8 +542,11 @@ void exec_autoforward_cb(GObject *obj, FolderItem *item, const gchar *file, guin
         /* match or not */
         int nindex = 0;
         for (nindex = 0; nindex < gz; nindex++){
-            if (memcmp(folders[nindex], item->path, strlen(folders[nindex])) == 0){
+            if (memcmp(folders[nindex], item->path, strlen(item->path)) == 0){
                 bmatch = TRUE;
+#ifdef DEBUG
+                debug_print("[DEBUG] %s %s => match\n", folders[nindex], item->path);
+#endif
             }
         }
       } else {
@@ -555,6 +558,11 @@ void exec_autoforward_cb(GObject *obj, FolderItem *item, const gchar *file, guin
     g_free(rcpath);
     g_return_if_fail(to_list != NULL);
 
+#ifdef DEBUG
+    debug_print("[DEBUG] item->path:%s\n", item->path);
+    debug_print("[DEBUG] bmatch:%d\n", bmatch);
+#endif
+    
     g_return_if_fail(bmatch == TRUE);
     
     syl_plugin_send_message(file, ac, to_list);

@@ -1,6 +1,7 @@
 
 TARGET=autoforward.dll
 OBJS=autoforward.o
+NAME=autoforward
 LIBSYLPH=./lib/libsylph-0-1.a
 LIBSYLPHEED=./lib/libsylpheed-plugin-0-1.a
 #LIBS=" -lglib-2.0-0  -lintl"
@@ -18,6 +19,23 @@ if [ -z "$1" ]; then
     com="gcc -shared -o $TARGET $OBJS -L./lib $LIBSYLPH $LIBSYLPHEED $LIBS -lssleay32 -leay32 -lws2_32 -liconv -lonig"
     echo $com
     eval $com
+    if [ $? != 0 ]; then
+        echo "done"
+    else
+        DEST="/C/Users/$LOGNAME/AppData/Roaming/Sylpheed/plugins"
+        if [ -d "$DEST" ]; then
+            com="cp $TARGET $DEST/autoforward.dll"
+            echo $com
+            eval $com
+        else
+            DEST="/C/Documents and Settings/$LOGNAME/Application Data/Sylpheed/plugins"
+            if [ -d "$DEST" ]; then
+                com="cp $TARGET \"$DEST/autoforward.dll\""
+                echo $com
+                eval $com
+            fi
+        fi
+    fi
 fi
 
 if [ ! -z "$1" ]; then
@@ -31,7 +49,16 @@ if [ ! -z "$1" ]; then
           ;;
       mo)
           com="msgfmt po/ja.po -o po/autoforward.mo"
-          ;;
+          echo $com
+          eval $com
+          DEST="/C/apps/Sylpheed/lib/locale/ja/LC_MESSAGES"
+          if [ -d "$DEST" ]; then
+              com="cp po/$NAME.mo $DEST/autoforward.mo"
+              echo $com
+              eval $com
+          fi
+          exit
+        ;;
       ui)
           com="gcc -o testui.exe testui.c $INC -L./lib $LIBSYLPH $LIBSYLPHEED $LIBS"
           ;;

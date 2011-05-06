@@ -1,3 +1,7 @@
+2011-05-06 HAYASHI Kentaro <kenhys@gmail.com>
+	* version 0.6.1
+	  FIXED: forwarding mail even if it is not listed in rc file.
+
 2011-04-02 HAYASHI Kentaro <kenhys@gmail.com>
 	
 	* version 0.6.0

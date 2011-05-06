@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-04-02 23:22+0900\n"
+"POT-Creation-Date: 2011-05-06 11:41+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -25,7 +25,7 @@ msgid "Automatically forwarding mail plug-in for Sylpheed"
 msgstr ""
 
 #: autoforward.c:89 autoforward.c:333
-msgid "Autoforward Settings"
+msgid "Autoforward Settings [autoforward]"
 msgstr ""
 
 #: autoforward.c:134 autoforward.c:475
