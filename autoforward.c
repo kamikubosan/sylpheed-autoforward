@@ -72,6 +72,8 @@ static GKeyFile *g_keyfile=NULL;
 static GtkWidget *g_address;
 static gboolean g_startup_flg = FALSE;
 static GtkWidget *g_startup = NULL;
+static GtkWidget *g_unreadonly = NULL;
+static gboolean g_unreadonly_flg = TRUE;
 static gboolean g_forward_flg = TRUE;
 static GtkListStore *g_folders = NULL;
 static GtkWidget *g_add_btn;
@@ -150,7 +152,12 @@ SylPluginInfo *plugin_info(void)
 
 gint plugin_interface_version(void)
 {
-	return SYL_PLUGIN_INTERFACE_VERSION;
+#if STABLE_RELEASE
+    /* emulate sylpheed 3.x not svn HEAD */
+    return 0x0107;
+#else
+    return SYL_PLUGIN_INTERFACE_VERSION;
+#endif
 }
 
 static void prefs_ok_cb(GtkWidget *widget, gpointer data)
@@ -166,6 +173,10 @@ static void prefs_ok_cb(GtkWidget *widget, gpointer data)
     gboolean startup = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(g_startup));
     g_key_file_set_boolean (g_keyfile, "forward", "startup", startup);
     debug_print("startup:%s\n", startup ? "true" : "false");
+
+    gboolean unreadonly = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(g_unreadonly));
+    g_key_file_set_boolean (g_keyfile, "forward", "unreadonly", unreadonly);
+    debug_print("unread only:%s\n", g_unreadonly_flg ? "true" : "false");
 
     g_key_file_set_boolean (g_keyfile, "forward", "all", g_forward_flg);
     debug_print("forward all:%s\n", g_forward_flg ? "true" : "false");
@@ -355,6 +366,10 @@ static void exec_autoforward_menu_cb(void)
 	gtk_widget_show(g_startup);
 	gtk_box_pack_start(GTK_BOX(vbox), g_startup, FALSE, FALSE, 0);
 
+	g_unreadonly = gtk_check_button_new_with_label(_("Forward unread mail only"));
+	gtk_widget_show(g_unreadonly);
+	gtk_box_pack_start(GTK_BOX(vbox), g_unreadonly, FALSE, FALSE, 0);
+
     /* all */
     GtkWidget *radio1 = gtk_radio_button_new_with_label(NULL, _("Forward all mail"));
     /* folder filtered */
@@ -424,6 +439,13 @@ static void exec_autoforward_menu_cb(void)
       if (g_startup_flg){
         gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(g_startup), TRUE);
       }
+
+      g_unreadonly_flg = g_key_file_get_boolean (g_keyfile, "forward", "unreadonly", NULL);
+      debug_print("unreadonly:%s\n", g_unreadonly_flg ? "true" : "false");
+      if (g_unreadonly_flg){
+        gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(g_unreadonly), TRUE);
+      }
+
       gchar *to=g_key_file_get_string (g_keyfile, "forward", "to", NULL);
       gtk_entry_set_text(GTK_ENTRY(g_address), to);
 
@@ -507,7 +529,19 @@ void exec_autoforward_cb(GObject *obj, FolderItem *item, const gchar *file, guin
     g_print("%s\n", item->name);
     g_print("%s\n", item->path);
 
-    syl_plugin_send_message_set_forward_flags(ac->address);
+    MsgInfo *msginfo = folder_item_get_msginfo(item, num);
+    debug_print("[DEBUG] flags:%08x UNREAD:%08x NEW:%08x MARKED:%08x ", msginfo->flags, MSG_UNREAD, MSG_NEW, MSG_MARKED);
+    debug_print("[DEBUG] perm_flags:%08x \n", msginfo->flags.perm_flags);
+    debug_print("[DEBUG] tmp_flags:%08x \n", msginfo->flags.tmp_flags);
+    if ( g_unreadonly_flg != FALSE){
+        debug_print("[DEBUG] unreadonly flag:%s\n", g_unreadonly_flg ? "true" : "false");
+        if (MSG_IS_UNREAD(msginfo->flags)){
+            debug_print("[DEBUG] MSG_IS_UNREAD:true");
+        } else {
+            return;
+        }
+    }
+    
 
     gchar *rcpath;
     GSList* to_list=NULL;
@@ -564,6 +598,7 @@ void exec_autoforward_cb(GObject *obj, FolderItem *item, const gchar *file, guin
 #endif
     
     g_return_if_fail(bmatch == TRUE);
-    
+
+    syl_plugin_send_message_set_forward_flags(ac->address);
     syl_plugin_send_message(file, ac, to_list);
 }

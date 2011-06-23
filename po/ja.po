@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: autoforward\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-05-06 11:41+0900\n"
+"POT-Creation-Date: 2011-06-23 19:07+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: HAYASHI Kentaro <kenhys@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: autoforward.c:49 autoforward.c:85 autoforward.c:86
+#: autoforward.c:49 autoforward.c:86 autoforward.c:87
 msgid "Auto mail forward Plug-in"
 msgstr "メール転送プラグイン"
 
@@ -24,53 +24,56 @@ msgstr "メール転送プラグイン"
 msgid "Automatically forwarding mail plug-in for Sylpheed"
 msgstr "メール転送プラグイン for Sylpheed"
 
-#: autoforward.c:89 autoforward.c:333
+#: autoforward.c:90 autoforward.c:339
 msgid "Autoforward Settings [autoforward]"
 msgstr "メール転送設定 [autoforward]"
 
-#: autoforward.c:134 autoforward.c:475
+#: autoforward.c:135 autoforward.c:485
 msgid "Autoforward is enabled. Click the icon to disable plugin."
 msgstr ""
 "転送プラグインを有効化しました。無効化するにはアイコンをクリックして下さい。"
 
-#: autoforward.c:345
+#: autoforward.c:351
 msgid "Forward to(E-mail):"
 msgstr "転送先メールアドレス:"
 
-#: autoforward.c:354
+#: autoforward.c:360
 msgid "Enable plugin on startup"
 msgstr "メール転送を起動時に有効化"
 
-#: autoforward.c:359
+#: autoforward.c:364
+msgid "Forward unread mail only"
+msgstr "未読メールのみ転送"
+
+#: autoforward.c:369
 msgid "Forward all mail"
 msgstr "すべてのメールを転送"
 
-#: autoforward.c:362
+#: autoforward.c:372
 msgid "Forward mail in folder"
 msgstr "指定フォルダ内のメールを転送"
 
-#: autoforward.c:364
+#: autoforward.c:374
 msgid "Forward condition:"
 msgstr "転送条件:"
 
-#: autoforward.c:379
+#: autoforward.c:389
 msgid "Forward mail in following folder:"
 msgstr "以下のフォルダ内メールを転送"
 
-#: autoforward.c:469 autoforward.c:478
+#: autoforward.c:479 autoforward.c:488
 msgid "Autoforward"
 msgstr "転送"
 
-#: autoforward.c:469
+#: autoforward.c:479
 msgid "autoforward plugin is enabled."
 msgstr "転送プラグインを有効化しました。"
 
-#: autoforward.c:478
+#: autoforward.c:488
 msgid "autoforward plugin is disabled."
 msgstr "転送プラグインを無効化しました。"
 
-#: autoforward.c:484
+#: autoforward.c:494
 msgid "Autoforward is disabled. Click the icon to enable plugin."
 msgstr ""
 "転送プラグインを無効化しました。有効化するにはアイコンをクリックして下さい。"
-

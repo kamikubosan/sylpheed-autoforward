@@ -8,7 +8,9 @@ LIBSYLPHEED=./lib/libsylpheed-plugin-0-1.a
 LIBS=" `pkg-config --libs glib-2.0 gobject-2.0 gtk+-2.0`"
 INC=" -I. -I../../ -I../../libsylph -I../../src `pkg-config --cflags glib-2.0 cairo gdk-2.0 gtk+-2.0`"
 DEF=" -DHAVE_CONFIG_H"
-if [ -z "$1" ]; then
+
+function compile ()
+{
     com="gcc -Wall -c $DEF $INC autoforward.c"
     echo $com
     eval $com
@@ -36,16 +38,27 @@ if [ -z "$1" ]; then
             fi
         fi
     fi
-fi
 
-if [ ! -z "$1" ]; then
+}
+
+while [  $# -ne 0 ]; do
   case "$1" in
+      -debug|--debug)
+          DEF=" -DDEBUG -DHAVE_CONFIG_H"
+          shift
+          ;;
       pot)
           mkdir -p po
           com="xgettext autoforward.c -k_ -kN_ -o po/autoforward.pot"
+          echo $com
+          eval $com
+          shift
           ;;
       po)
           com="msgmerge po/ja.po po/autoforward.pot -o po/ja.po"
+          echo $com
+          eval $com
+          shift
           ;;
       mo)
           com="msgfmt po/ja.po -o po/autoforward.mo"
@@ -58,19 +71,37 @@ if [ ! -z "$1" ]; then
               eval $com
           fi
           exit
-        ;;
+          ;;
       ui)
           com="gcc -o testui.exe testui.c $INC -L./lib $LIBSYLPH $LIBSYLPHEED $LIBS"
+          echo $com
+          eval $com
+          shift
           ;;
-      release)
-          zip sylpheed-autoforward-$2.zip autoforward.dll
-          zip -r sylpheed-autoforward-$2.zip README.ja.txt
-          zip -r sylpheed-autoforward-$2.zip autoforward.c
-          zip -r sylpheed-autoforward-$2.zip po/autoforward.mo
-          zip -r sylpheed-autoforward-$2.zip *.xpm
-          
+      -r|release)
+          shift
+          if [ ! -z "$1" ]; then
+              shift
+              r=$1
+              zip sylpheed-autoforward-$r.zip autoforward.dll
+              zip -r sylpheed-autoforward-$r.zip README.ja.txt
+              zip -r sylpheed-autoforward-$r.zip autoforward.c
+              zip -r sylpheed-autoforward-$r.zip po/autoforward.mo
+              zip -r sylpheed-autoforward-$r.zip *.xpm
+          fi
+          ;;
+      -c|-compile)
+          shift
+          if [ ! -z "$1" ]; then
+              if [ "$1" = "stable" ]; then
+                  DEF="$DEF -DSTABLE_RELEASE";
+                  shift
+              fi
+          fi
+          compile
+          ;;
+      *)
           ;;
   esac
-  echo $com
-  eval $com
-fi
+done
+
