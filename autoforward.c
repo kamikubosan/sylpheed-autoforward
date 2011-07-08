@@ -152,12 +152,8 @@ SylPluginInfo *plugin_info(void)
 
 gint plugin_interface_version(void)
 {
-#if STABLE_RELEASE
-    /* emulate sylpheed 3.x not svn HEAD */
+    /* sylpheed 3.1.0 or later */
     return 0x0107;
-#else
-    return SYL_PLUGIN_INTERFACE_VERSION;
-#endif
 }
 
 static void prefs_ok_cb(GtkWidget *widget, gpointer data)
