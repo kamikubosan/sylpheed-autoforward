@@ -11,7 +11,19 @@ DEF=" -DHAVE_CONFIG_H"
 
 function compile ()
 {
-    com="gcc -Wall -c $DEF $INC autoforward.c"
+    if [ ! -f "private_build.h" ]; then
+        echo "1" > .compile
+        echo "#define PRIVATE_BUILD 1" > private_build.h
+    else
+        ret=`cat .compile | gawk '{print $i+1}'`
+        echo $ret | tee .compile
+        echo "#define PRIVATE_BUILD \"build $ret\\0\"" > private_build.h
+    fi
+    com="windres -i version.rc -o version.o"
+    echo $com
+    eval $com
+
+    com="gcc -Wall -c $DEF $INC $NAME.c"
     echo $com
     eval $com
     if [ $? != 0 ]; then
@@ -26,13 +38,13 @@ function compile ()
     else
         DEST="/C/Users/$LOGNAME/AppData/Roaming/Sylpheed/plugins"
         if [ -d "$DEST" ]; then
-            com="cp $TARGET $DEST/autoforward.dll"
+            com="cp $TARGET $DEST/$NAME.dll"
             echo $com
             eval $com
         else
             DEST="/C/Documents and Settings/$LOGNAME/Application Data/Sylpheed/plugins"
             if [ -d "$DEST" ]; then
-                com="cp $TARGET \"$DEST/autoforward.dll\""
+                com="cp $TARGET \"$DEST/$NAME.dll\""
                 echo $com
                 eval $com
             fi
@@ -47,29 +59,29 @@ else
     while [  $# -ne 0 ]; do
         case "$1" in
             -debug|--debug)
-                DEF=" -DDEBUG -DHAVE_CONFIG_H"
+                DEF=" $DEF -DDEBUG"
                 shift
                 ;;
             pot)
                 mkdir -p po
-                com="xgettext autoforward.c -k_ -kN_ -o po/autoforward.pot"
+                com="xgettext $NAME.c -k_ -kN_ -o po/$NAME.pot"
                 echo $com
                 eval $com
                 shift
                 ;;
             po)
-                com="msgmerge po/ja.po po/autoforward.pot -o po/ja.po"
+                com="msgmerge po/ja.po po/$NAME.pot -o po/ja.po"
                 echo $com
                 eval $com
                 shift
                 ;;
             mo)
-                com="msgfmt po/ja.po -o po/autoforward.mo"
+                com="msgfmt po/ja.po -o po/$NAME.mo"
                 echo $com
                 eval $com
                 DEST="/C/apps/Sylpheed/lib/locale/ja/LC_MESSAGES"
                 if [ -d "$DEST" ]; then
-                    com="cp po/$NAME.mo $DEST/autoforward.mo"
+                    com="cp po/$NAME.mo $DEST/$NAME.mo"
                     echo $com
                     eval $com
                 fi
@@ -81,16 +93,22 @@ else
                 eval $com
                 shift
                 ;;
+            res)
+                com="windres -i version.rc -o version.o"
+                echo $com
+                eval $com
+                shift
+                ;;
             -r|release)
                 shift
                 if [ ! -z "$1" ]; then
                     shift
                     r=$1
-                    zip sylpheed-autoforward-$r.zip autoforward.dll
-                    zip -r sylpheed-autoforward-$r.zip README.ja.txt
-                    zip -r sylpheed-autoforward-$r.zip autoforward.c
-                    zip -r sylpheed-autoforward-$r.zip po/autoforward.mo
-                    zip -r sylpheed-autoforward-$r.zip *.xpm
+                    zip sylpheed-$NAME-$r.zip $NAME.dll
+                    zip -r sylpheed-$NAME-$r.zip README.ja.txt
+                    zip -r sylpheed-$NAME-$r.zip $NAME.c
+                    zip -r sylpheed-$NAME-$r.zip po/$NAME.mo
+                    zip -r sylpheed-$NAME-$r.zip *.xpm
                 fi
                 ;;
             -c|-compile)
@@ -103,7 +121,26 @@ else
                 fi
                 compile
                 ;;
+            def)
+                shift
+                PKG=libsylph-0-1
+                com="(cd lib;pexports $PKG.dll > $PKG.dll.def)"
+                echo $com
+                eval $com
+                com="(cd lib;dlltool --dllname $PKG.dll --input-def $PKG.dll.def --output-lib $PKG.a)"
+                echo $com
+                eval $com
+                com="(cd lib;pexports $PKG.dll > $PKG.dll.def)"
+                echo $com
+                eval $com
+                PKG=libsylpheed-plugin-0-1
+                com="(cd lib;dlltool --dllname $PKG.dll --input-def $PKG.dll.def --output-lib $PKG.a)"
+                echo $com
+                eval $com
+                exit
+                ;;
             *)
+                shift
                 ;;
         esac
     done
