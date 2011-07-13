@@ -1,6 +1,6 @@
 
 TARGET=autoforward.dll
-OBJS=autoforward.o
+OBJS="autoforward.o version.o"
 NAME=autoforward
 LIBSYLPH=./lib/libsylph-0-1.a
 LIBSYLPHEED=./lib/libsylpheed-plugin-0-1.a
@@ -41,67 +41,71 @@ function compile ()
 
 }
 
-while [  $# -ne 0 ]; do
-  case "$1" in
-      -debug|--debug)
-          DEF=" -DDEBUG -DHAVE_CONFIG_H"
-          shift
-          ;;
-      pot)
-          mkdir -p po
-          com="xgettext autoforward.c -k_ -kN_ -o po/autoforward.pot"
-          echo $com
-          eval $com
-          shift
-          ;;
-      po)
-          com="msgmerge po/ja.po po/autoforward.pot -o po/ja.po"
-          echo $com
-          eval $com
-          shift
-          ;;
-      mo)
-          com="msgfmt po/ja.po -o po/autoforward.mo"
-          echo $com
-          eval $com
-          DEST="/C/apps/Sylpheed/lib/locale/ja/LC_MESSAGES"
-          if [ -d "$DEST" ]; then
-              com="cp po/$NAME.mo $DEST/autoforward.mo"
-              echo $com
-              eval $com
-          fi
-          exit
-          ;;
-      ui)
-          com="gcc -o testui.exe testui.c $INC -L./lib $LIBSYLPH $LIBSYLPHEED $LIBS"
-          echo $com
-          eval $com
-          shift
-          ;;
-      -r|release)
-          shift
-          if [ ! -z "$1" ]; then
-              shift
-              r=$1
-              zip sylpheed-autoforward-$r.zip autoforward.dll
-              zip -r sylpheed-autoforward-$r.zip README.ja.txt
-              zip -r sylpheed-autoforward-$r.zip autoforward.c
-              zip -r sylpheed-autoforward-$r.zip po/autoforward.mo
-              zip -r sylpheed-autoforward-$r.zip *.xpm
-          fi
-          ;;
-      -c|-compile)
-          shift
-          if [ ! -z "$1" ]; then
-              if [ "$1" = "stable" ]; then
-                  DEF="$DEF -DSTABLE_RELEASE";
-                  shift
-              fi
-          fi
-          compile
-          ;;
-      *)
-          ;;
-  esac
-done
+if [ -z "$1" ]; then
+    compile
+else
+    while [  $# -ne 0 ]; do
+        case "$1" in
+            -debug|--debug)
+                DEF=" -DDEBUG -DHAVE_CONFIG_H"
+                shift
+                ;;
+            pot)
+                mkdir -p po
+                com="xgettext autoforward.c -k_ -kN_ -o po/autoforward.pot"
+                echo $com
+                eval $com
+                shift
+                ;;
+            po)
+                com="msgmerge po/ja.po po/autoforward.pot -o po/ja.po"
+                echo $com
+                eval $com
+                shift
+                ;;
+            mo)
+                com="msgfmt po/ja.po -o po/autoforward.mo"
+                echo $com
+                eval $com
+                DEST="/C/apps/Sylpheed/lib/locale/ja/LC_MESSAGES"
+                if [ -d "$DEST" ]; then
+                    com="cp po/$NAME.mo $DEST/autoforward.mo"
+                    echo $com
+                    eval $com
+                fi
+                exit
+                ;;
+            ui)
+                com="gcc -o testui.exe testui.c $INC -L./lib $LIBSYLPH $LIBSYLPHEED $LIBS"
+                echo $com
+                eval $com
+                shift
+                ;;
+            -r|release)
+                shift
+                if [ ! -z "$1" ]; then
+                    shift
+                    r=$1
+                    zip sylpheed-autoforward-$r.zip autoforward.dll
+                    zip -r sylpheed-autoforward-$r.zip README.ja.txt
+                    zip -r sylpheed-autoforward-$r.zip autoforward.c
+                    zip -r sylpheed-autoforward-$r.zip po/autoforward.mo
+                    zip -r sylpheed-autoforward-$r.zip *.xpm
+                fi
+                ;;
+            -c|-compile)
+                shift
+                if [ ! -z "$1" ]; then
+                    if [ "$1" = "stable" ]; then
+                        DEF="$DEF -DSTABLE_RELEASE";
+                        shift
+                    fi
+                fi
+                compile
+                ;;
+            *)
+                ;;
+        esac
+    done
 
+fi
