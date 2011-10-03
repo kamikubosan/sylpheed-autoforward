@@ -132,6 +132,14 @@ else
                 eval $com
                 exit
                 ;;
+            clean)
+                rm -f *.o *.lo *.la *.bak *~
+                shift
+                ;;
+            cleanall|distclean)
+                rm -f *.o *.lo *.la *.bak *.dll *.zip
+                shift
+                ;;
             *)
                 shift
                 ;;
