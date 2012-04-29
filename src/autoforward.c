@@ -1,7 +1,7 @@
 /*
  * Auto mail forward Plug-in
  *  -- forward received mail to address described in autoforwardrc.
- * Copyright (C) 2011 HAYASHI Kentaro <kenhys@gmail.com>
+ * Copyright (C) 2011-2012 HAYASHI Kentaro <kenhys@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,36 +18,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#include "defs.h"
-
-#include <glib.h>
-#include <gtk/gtk.h>
-
-#include <stdio.h>
-#include <sys/stat.h>
-
-#include "sylmain.h"
-#include "plugin.h"
-#include "procmsg.h"
-#include "procmime.h"
-#include "utils.h"
-#include "alertpanel.h"
-#include "prefs_common.h"
-#include "foldersel.h"
-#include "../res/online.xpm"
-#include "../res/offline.xpm"
-
-
-#include <glib.h>
-#include <glib/gi18n-lib.h>
-#include <locale.h>
-
-#define _(String) dgettext("autoforward", String)
-#define N_(String) gettext_noop(String)
-#define gettext_noop(String) (String)
-
-#define PLUGIN_NAME N_("Auto mail forward Plug-in")
-#define PLUGIN_DESC N_("Automatically forwarding mail plug-in for Sylpheed")
+#include "autoforward.h"
 
 static SylPluginInfo info = {
 	N_(PLUGIN_NAME),
