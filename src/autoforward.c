@@ -34,8 +34,8 @@
 #include "alertpanel.h"
 #include "prefs_common.h"
 #include "foldersel.h"
-#include "online.xpm"
-#include "offline.xpm"
+#include "../res/online.xpm"
+#include "../res/offline.xpm"
 
 
 #include <glib.h>

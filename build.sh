@@ -1,6 +1,6 @@
 
-TARGET=autoforward.dll
-OBJS="autoforward.o version.o"
+TARGET=src/autoforward.dll
+OBJS="src/autoforward.o src/version.o"
 NAME=autoforward
 LIBSYLPH=./lib/libsylph-0-1.a
 LIBSYLPHEED=./lib/libsylpheed-plugin-0-1.a
@@ -9,21 +9,24 @@ LIBS=" `pkg-config --libs glib-2.0 gobject-2.0 gtk+-2.0`"
 INC=" -I. -I../../ -I../../libsylph -I../../src `pkg-config --cflags glib-2.0 cairo gdk-2.0 gtk+-2.0`"
 DEF=" -DHAVE_CONFIG_H"
 
+PBUILDH="src/private_build.h" 
+DCOMPILE="src/.compile"
+
 function compile ()
 {
-    if [ ! -f "private_build.h" ]; then
-        echo "1" > .compile
-        echo "#define PRIVATE_BUILD 1" > private_build.h
+    if [ ! -f "$PBUILDH" ]; then
+        echo "1" > $DCOMPILE
+        echo "#define PRIVATE_BUILD 1" > $PBUILDH
     else
-        ret=`cat .compile | gawk '{print $i+1}'`
-        echo $ret | tee .compile
-        echo "#define PRIVATE_BUILD \"build $ret\\0\"" > private_build.h
+        ret=`cat $DCOMPILE | gawk '{print $i+1}'`
+        echo $ret | tee $DCOMPILE
+        echo "#define PRIVATE_BUILD \"build $ret\\0\"" > $PBUILDH
     fi
-    com="windres -i version.rc -o version.o"
+    com="windres -i res/version.rc -o src/version.o"
     echo $com
     eval $com
 
-    com="gcc -Wall -c $DEF $INC $NAME.c"
+    com="gcc -Wall -c -o src/$NAME.o $DEF $INC src/$NAME.c"
     echo $com
     eval $com
     if [ $? != 0 ]; then
