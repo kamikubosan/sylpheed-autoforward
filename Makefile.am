@@ -2,7 +2,7 @@ libdir = $(plugindir)
 
 lib_LTLIBRARIES = autoforward.la
 
-autoforward_la_SOURCES = autoforward.c
+autoforward_la_SOURCES = src/autoforward.c
 autoforward_la_LDFLAGS = -module -no-undefined -avoid-version
 
 INCLUDES = \
