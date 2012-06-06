@@ -1,35 +1,31 @@
-2011-05-06 HAYASHI Kentaro <kenhys@gmail.com>
-	* version 0.6.1
-	  FIXED: forwarding mail even if it is not listed in rc file.
+News of autoforward
 
-2011-04-02 HAYASHI Kentaro <kenhys@gmail.com>
-	
-	* version 0.6.0
-	  support forward mail in specific folder.
+* 0.6.1 (2011-05-06)
 
-2011-03-10 HAYASHI Kentaro <kenhys@gmail.com>
-	
-	* version 0.5.0
-	  support gettext.
-	  support config settings by GUI.
-	
-2011-02-23 HAYASHI Kentaro <kenhys@gmail.com>
-	
-	* version 0.4.0
-	  disable plugin in offline mode.
-	
-2011-02-21 HAYASHI Kentaro <kenhys@gmail.com>
-	
-	* version 0.3.0
-	  support toggle status icon from statusbar.
+  * forwarding mail even if it is not listed in rc file.
 
-2011-02-21 HAYASHI Kentaro <kenhys@gmail.com>
-	
-	* version 0.2.0
-	  support toggle status operation from statusbar.
+* 0.6.0 (2011-04-02)
 
-2011-02-15 HAYASHI Kentaro <kenhys@gmail.com>
-	
-	* vesion 0.1.0
-	  first test release.
+  * support forward mail in specific folder.
+
+* 0.5.0 (2011-03-10)
+
+  * support gettext.
+  * support config settings by GUI.
+
+* 0.4.0 (2011-02-23)
+
+  * disable plugin in offline mode.
+
+* 0.3.0 (2011-02-21)
+
+  * support toggle status icon from statusbar.
+
+* 0.2.0 (2011-02-21)
+
+  * support toggle status operation from statusbar.
+
+* 0.1.0 (2011-02-15)
+
+  * first test release.
 
