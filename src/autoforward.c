@@ -76,10 +76,10 @@ void plugin_load(void)
   GtkWidget *statusbar = syl_plugin_main_window_get_statusbar();
   GtkWidget *plugin_box = gtk_hbox_new(FALSE, 0);
 
-  GdkPixbuf* on_pixbuf = gdk_pixbuf_new_from_xpm_data((const char**)online_xpm);
+  GdkPixbuf* on_pixbuf = gdk_pixbuf_new_from_xpm_data((const char**)online);
   g_plugin_on=gtk_image_new_from_pixbuf(on_pixbuf);
     
-  GdkPixbuf* off_pixbuf = gdk_pixbuf_new_from_xpm_data((const char**)offline_xpm);
+  GdkPixbuf* off_pixbuf = gdk_pixbuf_new_from_xpm_data((const char**)offline);
   g_plugin_off=gtk_image_new_from_pixbuf(off_pixbuf);
 
   gtk_box_pack_start(GTK_BOX(plugin_box), g_plugin_on, FALSE, FALSE, 0);
