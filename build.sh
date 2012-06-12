@@ -12,6 +12,12 @@ DEF=" -DHAVE_CONFIG_H"
 PBUILDH="src/private_build.h" 
 DCOMPILE="src/.compile"
 
+
+MAJOR=0
+MINOR=7
+SUBMINOR=0
+
+
 function compile ()
 {
     if [ ! -f "$PBUILDH" ]; then
@@ -21,6 +27,11 @@ function compile ()
         ret=`cat $DCOMPILE | gawk '{print $i+1}'`
         echo $ret | tee $DCOMPILE
         echo "#define PRIVATE_BUILD \"build $ret\\0\"" > $PBUILDH
+        echo "#define NAME \"Autoforward\\0\"" >> $PBUILDH
+        echo "#define VERSION \"$MAJOR, $MINOR, $SUBMINOR, 0\\0\"" >> $PBUILDH
+        echo "#define NAMEVERSION \"Autoforward $MAJOR.$MINOR.$SUBMINOR\\0\"" >> $PBUILDH
+        echo "#define QVERSION \"$MAJOR,$MINOR,$SUBMINOR,0\"" >> $PBUILDH
+        echo "#define RVERSION $MAJOR,$MINOR,$SUBMINOR,0" >> $PBUILDH
     fi
     com="windres -i res/version.rc -o src/version.o"
     echo $com
