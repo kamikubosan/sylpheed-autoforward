@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-06-23 19:07+0900\n"
+"POT-Creation-Date: 2012-06-12 23:26+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,62 +16,58 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: autoforward.c:49 autoforward.c:86 autoforward.c:87
+#: src/autoforward.c:67 src/autoforward.c:68
 msgid "Auto mail forward Plug-in"
 msgstr ""
 
-#: autoforward.c:50
-msgid "Automatically forwarding mail plug-in for Sylpheed"
-msgstr ""
-
-#: autoforward.c:90 autoforward.c:339
+#: src/autoforward.c:71 src/autoforward.c:320
 msgid "Autoforward Settings [autoforward]"
 msgstr ""
 
-#: autoforward.c:135 autoforward.c:485
+#: src/autoforward.c:116 src/autoforward.c:473
 msgid "Autoforward is enabled. Click the icon to disable plugin."
 msgstr ""
 
-#: autoforward.c:351
+#: src/autoforward.c:332
 msgid "Forward to(E-mail):"
 msgstr ""
 
-#: autoforward.c:360
+#: src/autoforward.c:341
 msgid "Enable plugin on startup"
 msgstr ""
 
-#: autoforward.c:364
+#: src/autoforward.c:345
 msgid "Forward unread mail only"
 msgstr ""
 
-#: autoforward.c:369
+#: src/autoforward.c:350
 msgid "Forward all mail"
 msgstr ""
 
-#: autoforward.c:372
+#: src/autoforward.c:353
 msgid "Forward mail in folder"
 msgstr ""
 
-#: autoforward.c:374
+#: src/autoforward.c:355
 msgid "Forward condition:"
 msgstr ""
 
-#: autoforward.c:389
+#: src/autoforward.c:370
 msgid "Forward mail in following folder:"
 msgstr ""
 
-#: autoforward.c:479 autoforward.c:488
+#: src/autoforward.c:467 src/autoforward.c:476
 msgid "Autoforward"
 msgstr ""
 
-#: autoforward.c:479
+#: src/autoforward.c:467
 msgid "autoforward plugin is enabled."
 msgstr ""
 
-#: autoforward.c:488
+#: src/autoforward.c:476
 msgid "autoforward plugin is disabled."
 msgstr ""
 
-#: autoforward.c:494
+#: src/autoforward.c:482
 msgid "Autoforward is disabled. Click the icon to enable plugin."
 msgstr ""
