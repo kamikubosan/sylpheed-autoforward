@@ -72,7 +72,7 @@ else
                 ;;
             pot)
                 mkdir -p po
-                com="xgettext $NAME.c -k_ -kN_ -o po/$NAME.pot"
+                com="xgettext src/$NAME.c -k_ -kN_ -o po/$NAME.pot"
                 echo $com
                 eval $com
                 shift
@@ -109,13 +109,19 @@ else
             -r|release)
                 shift
                 if [ ! -z "$1" ]; then
-                    shift
-                    r=$1
-                    zip sylpheed-$NAME-$r.zip $NAME.dll
-                    zip -r sylpheed-$NAME-$r.zip README.ja.txt
-                    zip -r sylpheed-$NAME-$r.zip $NAME.c
+		    r=$1
+		    shift
+                    zip sylpheed-$NAME-${r}.zip src/$NAME.dll
+                    zip -r sylpheed-$NAME-$r.zip doc/README.ja.txt
+                    zip -r sylpheed-$NAME-$r.zip src/*.h
+                    zip -r sylpheed-$NAME-$r.zip src/auto*.c
+                    zip -r sylpheed-$NAME-$r.zip res/*.rc
                     zip -r sylpheed-$NAME-$r.zip po/$NAME.mo
-                    zip -r sylpheed-$NAME-$r.zip *.xpm
+                    zip -r sylpheed-$NAME-$r.zip res/*.xpm
+                    zip -r sylpheed-$NAME-$r.zip COPYING
+                    zip -r sylpheed-$NAME-$r.zip LICENSE
+                    zip -r sylpheed-$NAME-$r.zip README.md
+                    zip -r sylpheed-$NAME-$r.zip NEWS
                 fi
                 ;;
             -c|-compile)
