@@ -342,9 +342,11 @@ static void exec_autoforward_menu_cb(void)
   gtk_widget_show(g_startup);
   gtk_box_pack_start(GTK_BOX(vbox), g_startup, FALSE, FALSE, 0);
 
+#if 0
   g_unreadonly = gtk_check_button_new_with_label(_("Forward unread mail only"));
   gtk_widget_show(g_unreadonly);
   gtk_box_pack_start(GTK_BOX(vbox), g_unreadonly, FALSE, FALSE, 0);
+#endif
 
   /* all */
   GtkWidget *radio1 = gtk_radio_button_new_with_label(NULL, _("Forward all mail"));
@@ -416,11 +418,13 @@ static void exec_autoforward_menu_cb(void)
       gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(g_startup), TRUE);
     }
 
+#if 0
     g_unreadonly_flg = g_key_file_get_boolean (g_keyfile, "forward", "unreadonly", NULL);
     debug_print("unreadonly:%s\n", g_unreadonly_flg ? "true" : "false");
     if (g_unreadonly_flg){
       gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(g_unreadonly), TRUE);
     }
+#endif
 
     gchar *to=g_key_file_get_string (g_keyfile, "forward", "to", NULL);
     gtk_entry_set_text(GTK_ENTRY(g_address), to);
@@ -505,6 +509,7 @@ void exec_autoforward_cb(GObject *obj, FolderItem *item, const gchar *file, guin
   g_print("%s\n", item->name);
   g_print("%s\n", item->path);
 
+#if 0
   MsgInfo *msginfo = folder_item_get_msginfo(item, num);
   debug_print("[DEBUG] flags:%08x UNREAD:%08x NEW:%08x MARKED:%08x ", msginfo->flags, MSG_UNREAD, MSG_NEW, MSG_MARKED);
   debug_print("[DEBUG] perm_flags:%08x \n", msginfo->flags.perm_flags);
@@ -517,7 +522,7 @@ void exec_autoforward_cb(GObject *obj, FolderItem *item, const gchar *file, guin
       return;
     }
   }
-    
+#endif    
 
   gchar *rcpath;
   GSList* to_list=NULL;
