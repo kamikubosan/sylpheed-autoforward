@@ -17,8 +17,8 @@ Install
 Usage
 -----
 
-1. Select 'Tools - Toggle autoforward' or click 'AC OFF' on statusbar.
-
-this operation enables autoforward functionality.
+1. Select 'Tools - Autoforward Settings[autoforward]'
+2. modify options what your needs
+3. Click autoforward icon to enable plugin functionality.
 
 
