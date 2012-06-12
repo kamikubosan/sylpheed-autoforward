@@ -1,10 +1,10 @@
 #include <windows.h>
 
-#include "private_build.h"
+#include "../src/private_build.h"
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 0,6,1,0
- PRODUCTVERSION 0,6,1,0
+ FILEVERSION RVERSION
+ PRODUCTVERSION RVERSION
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -19,17 +19,17 @@ BEGIN
     BEGIN
         BLOCK "041104b0"
         BEGIN
-            VALUE "Comments", "Autoforward 0.6.1\0"
+            VALUE "Comments", NAMEVERSION
             VALUE "CompanyName", "GiGo I.C.E.\0"
-            VALUE "FileDescription", "Autoforward 0.6.1\0"
-            VALUE "FileVersion", "0, 6, 1, 1\0"
+            VALUE "FileDescription", NAMEVERSION
+            VALUE "FileVersion", VERSION
             VALUE "InternalName", "autoforward\0"
-            VALUE "LegalCopyright", "Copyright (C) 2011 HAYASHI Kentaro\0"
-            VALUE "LegalTrademarks", "Copyright (C) 2011 HAYASHI Kentaro\0"
+            VALUE "LegalCopyright", "Copyright (C) 2011-2012 HAYASHI Kentaro\0"
+            VALUE "LegalTrademarks", "Copyright (C) 2011-2012 HAYASHI Kentaro\0"
             VALUE "OriginalFilename", "autoforward.dll\0"
             VALUE "PrivateBuild", PRIVATE_BUILD
-            VALUE "ProductName", "Autoforward 0.6.1\0"
-            VALUE "ProductVersion", "0, 6, 1, 0\0"
+            VALUE "ProductName", NAMEVERSION
+            VALUE "ProductVersion", VERSION
             VALUE "SpecialBuild", "\0"
         END
     END
