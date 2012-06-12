@@ -111,7 +111,10 @@ else
                 if [ ! -z "$1" ]; then
 		    r=$1
 		    shift
-                    zip sylpheed-$NAME-${r}.zip src/$NAME.dll
+                    if [ -f src/$NAME.dll ]; then
+			mv src/$NAME.dll .
+		    fi
+		    zip sylpheed-$NAME-${r}.zip $NAME.dll
                     zip -r sylpheed-$NAME-$r.zip doc/README.ja.txt
                     zip -r sylpheed-$NAME-$r.zip src/*.h
                     zip -r sylpheed-$NAME-$r.zip src/auto*.c
@@ -122,6 +125,7 @@ else
                     zip -r sylpheed-$NAME-$r.zip LICENSE
                     zip -r sylpheed-$NAME-$r.zip README.md
                     zip -r sylpheed-$NAME-$r.zip NEWS
+                    sha1sum sylpheed-$NAME-$r.zip > sylpheed-$NAME-$r.zip.sha1sum
                 fi
                 ;;
             -c|-compile)
