@@ -147,12 +147,11 @@ gint plugin_interface_version(void)
 static void prefs_ok_cb(GtkWidget *widget, gpointer data)
 {
   gchar *rcpath;
-  gchar *address;
+  const gchar *address;
   gboolean startup;
   gboolean unreadonly;
   GtkTreeModel *model;
   gint nfolder;
-  GError *errval;
   gchar **folders;
   GtkTreeIter iter;
   gboolean valid;
