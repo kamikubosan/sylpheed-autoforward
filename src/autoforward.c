@@ -192,7 +192,8 @@ g_keyfile = g_key_file_new();
       g_print("%d:%s\n", nindex, folder);
       nindex++;
     }
-    g_key_file_set_string_list(g_keyfile, "forward", "folder", folders, nfolder);
+    g_key_file_set_string_list(g_keyfile, "forward", "folder",
+                               (const gchar * const*)folders, nfolder);
   }else{
     g_key_file_remove_key(g_keyfile, "forward", "folder", NULL);
   }
