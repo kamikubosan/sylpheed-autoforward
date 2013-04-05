@@ -44,6 +44,7 @@
 #include "utils.h"
 #include "alertpanel.h"
 #include "prefs_common.h"
+#include "account.h"
 #include "foldersel.h"
 #include "../res/online.xpm"
 #include "../res/offline.xpm"
