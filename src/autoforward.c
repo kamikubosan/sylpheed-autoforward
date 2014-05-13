@@ -531,6 +531,22 @@ static void exec_autoforward_onoff_cb(void)
   }
 }
 
+#if !GLIB_CHECK_VERSION(2, 16, 0)
+int g_strcmp0(const char *str1, const char *str2)
+{
+  size_t str1_len = strlen(str1);
+  size_t str2_len = strlen(str2);
+
+  int value;
+  if ((str1_len - str2_len) == 0) {
+    value = memcmp(str1, str2, str1_len);
+  } else {
+    value = str1_len - str2_len;
+  }
+  return value;
+}
+#endif
+
 void exec_autoforward_cb(GObject *obj, FolderItem *item, const gchar *file, guint num)
 {
   PrefsCommon *prefs_common;
@@ -564,8 +580,8 @@ void exec_autoforward_cb(GObject *obj, FolderItem *item, const gchar *file, guin
   g_return_if_fail(ac != NULL);
 
   /* check item->path for filter */
-  g_print("%s\n", item->name);
-  g_print("%s\n", item->path);
+  g_print("[DEBUG] %s:%s name:%s\n", G_STRLOC, G_STRFUNC, item->name);
+  g_print("[DEBUG] %s:%s path:%s\n", G_STRLOC, G_STRFUNC,  item->path);
 
 #if 0
   MsgInfo *msginfo = folder_item_get_msginfo(item, num);
@@ -588,7 +604,7 @@ void exec_autoforward_cb(GObject *obj, FolderItem *item, const gchar *file, guin
   g_key_file_load_from_file(g_keyfile, rcpath, G_KEY_FILE_KEEP_COMMENTS, NULL);
   
   to=g_key_file_get_string (g_keyfile, "forward", "to", NULL);
-  debug_print("to:%s", to);
+  debug_print("[DEBUG] to:%s", to);
   to_list = address_list_append(to_list, to);
 
 
@@ -613,11 +629,9 @@ void exec_autoforward_cb(GObject *obj, FolderItem *item, const gchar *file, guin
       /* match or not */
       nindex = 0;
       for (nindex = 0; nindex < gz; nindex++){
-        if (memcmp(folders[nindex], item->path, strlen(item->path)) == 0){
+        if (g_strcmp0(folders[nindex], item->path) == 0){
           bmatch = TRUE;
-#ifdef DEBUG
           debug_print("[DEBUG] %s %s => match\n", folders[nindex], item->path);
-#endif
         }
       }
     } else {
@@ -629,10 +643,8 @@ void exec_autoforward_cb(GObject *obj, FolderItem *item, const gchar *file, guin
   g_free(rcpath);
   g_return_if_fail(to_list != NULL);
 
-#ifdef DEBUG
-  debug_print("[DEBUG] item->path:%s\n", item->path);
-  debug_print("[DEBUG] bmatch:%d\n", bmatch);
-#endif
+  g_print("[DEBUG] item->path:%s\n", item->path);
+  g_print("[DEBUG] bmatch:%d\n", bmatch);
     
   g_return_if_fail(bmatch == TRUE);
 
