@@ -594,13 +594,15 @@ void exec_autoforward_cb(GObject *obj, FolderItem *item, const gchar *file, guin
 
   forward_all = g_key_file_get_boolean (g_keyfile, "forward", "all", &errval);
   if (forward_all != TRUE){
-    switch (errval->code){
+    if (errval) {
+      switch (errval->code){
     case G_KEY_FILE_ERROR_INVALID_VALUE:
     case G_KEY_FILE_ERROR_KEY_NOT_FOUND:
       forward_all=TRUE;
       break;
     default:
       break;
+    }
     }
   }
     
