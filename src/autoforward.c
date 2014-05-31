@@ -75,7 +75,6 @@ void plugin_load(void)
   debug_print(gettext("Auto mail forward Plug-in"));
   debug_print(dgettext("autoforward", "Auto mail forward Plug-in"));
 
-  syl_plugin_add_menuitem("/Tools", NULL, NULL, NULL);
   syl_plugin_add_menuitem("/Tools", _("Autoforward Settings [autoforward]"), exec_autoforward_menu_cb, NULL);
 
   g_signal_connect(syl_app_get(), "add-msg", G_CALLBACK(exec_autoforward_cb), NULL);
