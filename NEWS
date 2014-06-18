@@ -1,5 +1,11 @@
 News of autoforward
 
+* 0.7.6 (2014-06-18)
+
+  * Supported autotools.
+  * Supported Travis-CI.
+  * Fixed a bug that filter rule is wrongly applied. [Reported by case]
+
 * 0.7.0 (2012-06-12)
 
   * changed licence of autoforward from GPLv2 to 2-Clause BSD license.
