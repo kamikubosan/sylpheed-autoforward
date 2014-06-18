@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.68])
-AC_INIT([autoforward], [0.7.0], [kenhys@gmail.com])
+AC_INIT([autoforward], [0.7.6], [kenhys@gmail.com])
 AC_CONFIG_SRCDIR([src/autoforward.c])
 AC_CONFIG_HEADERS([src/config.h])
 AC_CONFIG_AUX_DIR([config])
