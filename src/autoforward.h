@@ -44,6 +44,7 @@
 #include "utils.h"
 #include "alertpanel.h"
 #include "prefs_common.h"
+#include "account.h"
 #include "foldersel.h"
 #include "../res/online.xpm"
 #include "../res/offline.xpm"
@@ -53,9 +54,6 @@
 #include <glib/gi18n-lib.h>
 #include <locale.h>
 
-#define _(String) dgettext("autoforward", String)
-#define N_(String) gettext_noop(String)
-#define gettext_noop(String) (String)
 
 #define PLUGIN_NAME N_("Auto mail forward Plug-in")
 #define PLUGIN_DESC N_("Automatically forwarding mail plug-in for Sylpheed")

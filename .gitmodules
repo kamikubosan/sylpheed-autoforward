@@ -1,0 +1,6 @@
+[submodule "sylpheed-plugin-factory"]
+	path = sylpheed-plugin-factory
+	url = git://github.com/kenhys/sylpheed-plugin-factory.git
+[submodule "lib/sylplugin_factory"]
+	path = lib/sylplugin_factory
+	url = git://github.com/kenhys/sylpheed-plugin-factory.git
