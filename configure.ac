@@ -2,10 +2,10 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.68])
-m4_define([af_major], [0])
-m4_define([af_minor], [7])
-m4_define([af_micro], [6])
-m4_define([autoforward_version], [af_major.af_minor.af_micro])
+m4_define([major], [0])
+m4_define([minor], [7])
+m4_define([micro], [6])
+m4_define([autoforward_version], major.minor.micro)
 AC_INIT([autoforward], [autoforward_version], [kenhys@gmail.com])
 AC_CONFIG_SRCDIR([src/autoforward.c])
 AC_CONFIG_HEADERS([src/config.h])
@@ -13,6 +13,17 @@ AC_CONFIG_AUX_DIR([config])
 AC_CONFIG_MACRO_DIR([m4])
 
 AM_INIT_AUTOMAKE
+
+AC_DEFINE(MAJOR_VERSION, ["major"], [Major version])
+AC_DEFINE(MINOR_VERSION, ["minor"], [Minor version])
+AC_DEFINE(MICRO_VERSION, ["micro"], [Micro version])
+AC_SUBST([MAJOR_VERSION], [major])
+AC_SUBST(MINOR_VERSION, [minor])
+AC_SUBST(MICRO_VERSION, [micro])
+
+m4_define([BUILD_NUMBER], m4_include(build_number))
+AC_DEFINE([BUILD_REVISION], [BUILD_NUMBER], [Build revision])
+AC_SUBST(BUILD_REVISION, [BUILD_NUMBER])
 
 # Checks for programs.
 AC_PROG_AWK
