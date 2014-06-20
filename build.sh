@@ -23,6 +23,14 @@ Optional args:
 EOF
 }
 
+options=$(getopt -o -hdpm -l debug,po,mo -- "$@")
+
+if [ $? -ne 0 ]; then
+    usage
+    exit 1
+fi
+eval set -- "${options}"
+
 TARGET=src/autoforward.dll
 OBJS="src/autoforward.o src/version.o"
 NAME=autoforward
