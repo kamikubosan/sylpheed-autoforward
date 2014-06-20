@@ -31,6 +31,17 @@ if [ $? -ne 0 ]; then
 fi
 eval set -- "${options}"
 
+while true
+do
+    case "$1" in
+        -h|--help)   usage && exit 0;;
+        -d|--debug) mode=debug; shift;;
+        -p|--po)    mode=po; shift;;
+        -m|--mo)    mode=mo; shift;;
+        *)          break;;
+    esac
+done
+
 TARGET=src/autoforward.dll
 OBJS="src/autoforward.o src/version.o"
 NAME=autoforward
