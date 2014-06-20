@@ -23,6 +23,17 @@ Optional args:
 EOF
 }
 
+make_def() {
+    for pkg in libsylph-0-1 libsylpheed-plugin-0-1; do
+	com="(cd lib;pexports $pkg.dll > $pkg.dll.def)"
+	echo $com
+	eval $com
+	com="(cd lib;dlltool --dllname $pkg.dll --input-def $pkg.dll.def --output-lib $pkg.a)"
+	echo $com
+	eval $com
+    done
+}
+
 mode=""
 options=$(getopt -o -hdpm -l debug,po,mo -- "$@")
 
@@ -162,22 +173,7 @@ case $mode in
         compile
         ;;
     def)
-        shift
-        PKG=libsylph-0-1
-        com="(cd lib;pexports $PKG.dll > $PKG.dll.def)"
-        echo $com
-        eval $com
-        com="(cd lib;dlltool --dllname $PKG.dll --input-def $PKG.dll.def --output-lib $PKG.a)"
-        echo $com
-        eval $com
-        com="(cd lib;pexports $PKG.dll > $PKG.dll.def)"
-        echo $com
-        eval $com
-        PKG=libsylpheed-plugin-0-1
-        com="(cd lib;dlltool --dllname $PKG.dll --input-def $PKG.dll.def --output-lib $PKG.a)"
-        echo $com
-        eval $com
-        exit
+        make_def
         ;;
     clean)
         rm -f *.o *.lo *.la *.bak *~
