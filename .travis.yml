@@ -11,8 +11,8 @@ branches:
     - develop
 env:
   - SYLPHEED_STAGE=master
-  - SYLPHEED_STAGE=3.5.0beta1
-  - SYLPHEED_STAGE=3.4.2
+  - SYLPHEED_STAGE=3.5
+  - SYLPHEED_STAGE=3.4
 before_script:
   - curl --location https://raw.github.com/kenhys/sylpheed-plugin-factory/master/misc/setup-travis.sh | sh
   - git submodule update --init --recursive
