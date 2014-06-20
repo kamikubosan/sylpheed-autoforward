@@ -2,10 +2,11 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.68])
-m4_define([major], [0])
-m4_define([minor], [7])
-m4_define([micro], [6])
-m4_define([autoforward_version], major.minor.micro)
+m4_define([autoforward_major], [0])
+m4_define([autoforward_minor], [7])
+m4_define([autoforward_micro], [6])
+m4_define([autoforward_version],
+	  [autoforward_major.autoforward_minor.autoforward_micro])
 AC_INIT([autoforward], [autoforward_version], [kenhys@gmail.com])
 AC_CONFIG_SRCDIR([src/autoforward.c])
 AC_CONFIG_HEADERS([src/config.h])
