@@ -25,12 +25,8 @@ EOF
 
 make_def() {
     for pkg in libsylph-0-1 libsylpheed-plugin-0-1; do
-	com="(cd lib;pexports $pkg.dll > $pkg.dll.def)"
-	echo $com
-	eval $com
-	com="(cd lib;dlltool --dllname $pkg.dll --input-def $pkg.dll.def --output-lib $pkg.a)"
-	echo $com
-	eval $com
+	(cd lib;pexports $pkg.dll > $pkg.dll.def)
+	(cd lib;dlltool --dllname $pkg.dll --input-def $pkg.dll.def --output-lib $pkg.a)
     done
 }
 
