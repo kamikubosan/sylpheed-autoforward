@@ -1,3 +1,12 @@
+#!/bin/bash
+
+run() {
+    "$@"
+    if test $? -ne 0; then
+        echo "Failed $@"
+        exit 1
+    fi
+}
 
 TARGET=src/autoforward.dll
 OBJS="src/autoforward.o src/version.o"
