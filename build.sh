@@ -8,6 +8,21 @@ run() {
     fi
 }
 
+usage() {
+    cat <<EOF 1>&2
+Usage:
+     $0 [-d|--debug]
+        [-p|--po]
+        [-m|--mo]
+Mandatory args:
+  -d,--debug enable debug build
+  -p,--po    update po files
+  -m,--mo    update mo files
+Optional args:
+  -h,--help  print this help
+EOF
+}
+
 TARGET=src/autoforward.dll
 OBJS="src/autoforward.o src/version.o"
 NAME=autoforward
