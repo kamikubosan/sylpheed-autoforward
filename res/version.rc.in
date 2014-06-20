@@ -17,16 +17,16 @@ BEGIN
     BEGIN
         BLOCK "041104b0"
         BEGIN
-            VALUE "Comments", @NAMEVERSION@
+            VALUE "Comments", @NAME_VERSION@
             VALUE "CompanyName", "GiGo I.C.E.\0"
-            VALUE "FileDescription", @NAMEVERSION@
+            VALUE "FileDescription", @NAME_VERSION@
             VALUE "FileVersion", @VERSION@
             VALUE "InternalName", "autoforward\0"
             VALUE "LegalCopyright", "Copyright (C) 2011-2014 HAYASHI Kentaro\0"
             VALUE "LegalTrademarks", "Copyright (C) 2011-2014 HAYASHI Kentaro\0"
             VALUE "OriginalFilename", "autoforward.dll\0"
             VALUE "PrivateBuild", @PRIVATE_BUILD@
-            VALUE "ProductName", @NAMEVERSION@
+            VALUE "ProductName", @NAME_VERSION@
             VALUE "ProductVersion", @VERSION@
             VALUE "SpecialBuild", "\0"
         END
