@@ -23,6 +23,7 @@ Optional args:
 EOF
 }
 
+mode=""
 options=$(getopt -o -hdpm -l debug,po,mo -- "$@")
 
 if [ $? -ne 0 ]; then
@@ -104,113 +105,87 @@ function compile ()
 
 }
 
-if [ -z "$1" ]; then
-    compile
-else
-    while [  $# -ne 0 ]; do
-        case "$1" in
-            -debug|--debug)
-                DEF=" $DEF -DDEBUG"
-                shift
-                ;;
-            pot)
-                mkdir -p po
-                com="xgettext src/$NAME.c -k_ -kN_ -o po/$NAME.pot"
-                echo $com
-                eval $com
-                shift
-                ;;
-            po)
-                com="msgmerge po/ja.po po/$NAME.pot -o po/ja.po"
-                echo $com
-                eval $com
-                shift
-                ;;
-            mo)
-                com="msgfmt po/ja.po -o po/$NAME.mo"
-                echo $com
-                eval $com
-                if [ -d "$SYLLOCALEDIR" ]; then
-                    com="cp po/$NAME.mo \"$SYLLOCALEDIR/$NAME.mo\""
-                    echo $com
-                    eval $com
-                fi
-                exit
-                ;;
-            ui)
-                com="gcc -o testui.exe testui.c $INC -L./lib $LIBSYLPH $LIBSYLPHEED $LIBS"
-                echo $com
-                eval $com
-                shift
-                ;;
-            res)
-                com="windres -i version.rc -o version.o"
-                echo $com
-                eval $com
-                shift
-                ;;
-            -r|release)
-                shift
-                if [ ! -z "$1" ]; then
-		    r=$1
-		    shift
-                    if [ -f src/$NAME.dll ]; then
-			mv src/$NAME.dll .
-		    fi
-		    zip sylpheed-$NAME-${r}.zip $NAME.dll
-                    zip -r sylpheed-$NAME-$r.zip doc/README.ja.txt
-                    zip -r sylpheed-$NAME-$r.zip src/*.h
-                    zip -r sylpheed-$NAME-$r.zip src/auto*.c
-                    zip -r sylpheed-$NAME-$r.zip res/*.rc
-                    zip -r sylpheed-$NAME-$r.zip po/$NAME.mo
-                    zip -r sylpheed-$NAME-$r.zip res/*.xpm
-                    zip -r sylpheed-$NAME-$r.zip COPYING
-                    zip -r sylpheed-$NAME-$r.zip LICENSE
-                    zip -r sylpheed-$NAME-$r.zip README.md
-                    zip -r sylpheed-$NAME-$r.zip NEWS
-                    sha1sum sylpheed-$NAME-$r.zip > sylpheed-$NAME-$r.zip.sha1sum
-                fi
-                ;;
-            -c|-compile)
-                shift
-                if [ ! -z "$1" ]; then
-                    if [ "$1" = "stable" ]; then
-                        DEF="$DEF -DSTABLE_RELEASE";
-                        shift
-                    fi
-                fi
-                compile
-                ;;
-            def)
-                shift
-                PKG=libsylph-0-1
-                com="(cd lib;pexports $PKG.dll > $PKG.dll.def)"
-                echo $com
-                eval $com
-                com="(cd lib;dlltool --dllname $PKG.dll --input-def $PKG.dll.def --output-lib $PKG.a)"
-                echo $com
-                eval $com
-                com="(cd lib;pexports $PKG.dll > $PKG.dll.def)"
-                echo $com
-                eval $com
-                PKG=libsylpheed-plugin-0-1
-                com="(cd lib;dlltool --dllname $PKG.dll --input-def $PKG.dll.def --output-lib $PKG.a)"
-                echo $com
-                eval $com
-                exit
-                ;;
-            clean)
-                rm -f *.o *.lo *.la *.bak *~
-                shift
-                ;;
-            cleanall|distclean)
-                rm -f *.o *.lo *.la *.bak *.dll *.zip
-                shift
-                ;;
-            *)
-                shift
-                ;;
-        esac
-    done
+case $mode in
 
-fi
+    debug)
+        DEF=" $DEF -DDEBUG"
+	compile
+	;;
+    pot)
+        mkdir -p po
+	run xgettext src/$NAME.c -k_ -kN_ -o po/$NAME.pot
+	;;
+    po)
+        run msgmerge po/ja.po po/$NAME.pot -o po/ja.po
+	;;
+    mo)
+	run msgfmt po/ja.po -o po/$NAME.mo
+        if [ -d "$SYLLOCALEDIR" ]; then
+            run cp po/$NAME.mo $SYLLOCALEDIR/$NAME.mo
+        fi
+        exit 0
+	;;
+    ui)
+        run gcc -o testui.exe testui.c $INC -L./lib $LIBSYLPH $LIBSYLPHEED $LIBS
+        ;;
+    res)
+        run windres -i version.rc -o version.o
+	;;
+    release)
+	if [ ! -z "$1" ]; then
+	    r=$1
+	    shift
+            if [ -f src/$NAME.dll ]; then
+		mv src/$NAME.dll .
+	    fi
+	    zip sylpheed-$NAME-${r}.zip $NAME.dll
+            zip -r sylpheed-$NAME-$r.zip doc/README.ja.txt
+            zip -r sylpheed-$NAME-$r.zip src/*.h
+            zip -r sylpheed-$NAME-$r.zip src/auto*.c
+            zip -r sylpheed-$NAME-$r.zip res/*.rc
+            zip -r sylpheed-$NAME-$r.zip po/$NAME.mo
+            zip -r sylpheed-$NAME-$r.zip res/*.xpm
+            zip -r sylpheed-$NAME-$r.zip COPYING
+            zip -r sylpheed-$NAME-$r.zip LICENSE
+            zip -r sylpheed-$NAME-$r.zip README.md
+            zip -r sylpheed-$NAME-$r.zip NEWS
+            sha1sum sylpheed-$NAME-$r.zip > sylpheed-$NAME-$r.zip.sha1sum
+        fi
+	;;
+    compile)
+        if [ ! -z "$1" ]; then
+            if [ "$1" = "stable" ]; then
+                DEF="$DEF -DSTABLE_RELEASE";
+                shift
+            fi
+        fi
+        compile
+        ;;
+    def)
+        shift
+        PKG=libsylph-0-1
+        com="(cd lib;pexports $PKG.dll > $PKG.dll.def)"
+        echo $com
+        eval $com
+        com="(cd lib;dlltool --dllname $PKG.dll --input-def $PKG.dll.def --output-lib $PKG.a)"
+        echo $com
+        eval $com
+        com="(cd lib;pexports $PKG.dll > $PKG.dll.def)"
+        echo $com
+        eval $com
+        PKG=libsylpheed-plugin-0-1
+        com="(cd lib;dlltool --dllname $PKG.dll --input-def $PKG.dll.def --output-lib $PKG.a)"
+        echo $com
+        eval $com
+        exit
+        ;;
+    clean)
+        rm -f *.o *.lo *.la *.bak *~
+        ;;
+    cleanall|distclean)
+        rm -f *.o *.lo *.la *.bak *.dll *.zip
+        ;;
+    *)
+	compile
+	;;
+esac
