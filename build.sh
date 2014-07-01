@@ -50,9 +50,9 @@ do
         -d|--debug) mode=debug; shift;;
         -p|--po)    mode=po; shift;;
         -m|--mo)    mode=mo; shift;;
-        -def)
+        --def)
             make_def; shift;;
-        -dclean)
+        --dclean)
 	    make_distclean; shift;;
 	*)
             break
