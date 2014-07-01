@@ -15,9 +15,9 @@ AC_CONFIG_MACRO_DIR([m4])
 
 AM_INIT_AUTOMAKE
 
-AC_DEFINE(MAJOR_VERSION, ["major"], [Major version])
-AC_DEFINE(MINOR_VERSION, ["minor"], [Minor version])
-AC_DEFINE(MICRO_VERSION, ["micro"], [Micro version])
+AC_DEFINE(MAJOR_VERSION, ["autoforward_major"], [Major version])
+AC_DEFINE(MINOR_VERSION, ["autoforward_minor"], [Minor version])
+AC_DEFINE(MICRO_VERSION, ["autoforward_micro"], [Micro version])
 AC_SUBST([MAJOR_VERSION], [autoforward_major])
 AC_SUBST([MINOR_VERSION], [autoforward_minor])
 AC_SUBST([MICRO_VERSION], [autoforward_micro])
