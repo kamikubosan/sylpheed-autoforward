@@ -30,6 +30,10 @@ make_def() {
     done
 }
 
+make_clean() {
+    rm -f *.o *.lo *.la *.bak *~
+}
+
 make_distclean() {
     rm -f *.o *.lo *.la *.bak *.dll *.zip
 }
@@ -61,6 +65,8 @@ do
             make_def; shift;;
         --dclean)
 	    make_distclean; shift;;
+	--clean)
+	    make_clean; shift;;
 	*)
             break
 	    ;;
@@ -177,9 +183,6 @@ case $mode in
             fi
         fi
         compile
-        ;;
-    clean)
-        rm -f *.o *.lo *.la *.bak *~
         ;;
     *)
 	compile
