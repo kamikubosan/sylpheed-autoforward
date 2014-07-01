@@ -30,6 +30,10 @@ make_def() {
     done
 }
 
+make_distclean() {
+    rm -f *.o *.lo *.la *.bak *.dll *.zip
+}
+
 mode=""
 options=$(getopt -o -hdpm -l debug,po,mo,def -- "$@")
 
@@ -47,10 +51,10 @@ do
         -p|--po)    mode=po; shift;;
         -m|--mo)    mode=mo; shift;;
         -def)
-            make_def
-	    shift
-	    ;;
-        *)
+            make_def; shift;;
+        -dclean)
+	    make_distclean; shift;;
+	*)
             break
 	    ;;
     esac
@@ -176,9 +180,6 @@ case $mode in
         ;;
     clean)
         rm -f *.o *.lo *.la *.bak *~
-        ;;
-    cleanall|distclean)
-        rm -f *.o *.lo *.la *.bak *.dll *.zip
         ;;
     *)
 	compile
