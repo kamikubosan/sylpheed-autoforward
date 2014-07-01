@@ -111,28 +111,20 @@ function compile ()
     echo $com
     eval $com
 
-    com="gcc -Wall -c -o src/$NAME.o $DEF $INC src/$NAME.c"
-    echo $com
-    eval $com
-    if [ $? != 0 ]; then
-        echo "compile error"
-        exit
-    fi
-    com="gcc -shared -o $TARGET $OBJS -L./lib $LIBSYLPH $LIBSYLPHEED $LIBS -lssleay32 -leay32 -lws2_32 -liconv -lonig"
-    echo $com
-    eval $com
-    if [ $? != 0 ]; then
-        echo "done"
-    else
-        if [ -d "$SYLPLUGINDIR" ]; then
-            com="cp $TARGET \"$SYLPLUGINDIR/$NAME.dll\""
-            echo $com
-            eval $com
-        else
-            :
-        fi
-    fi
+    for src in `find . -name '*.c'`; do
+	src_base=${src%%.c}
+	run gcc -Wall -c -o ${src_base}.o $DEF $INC ${src}
+    done
 
+    OBJS=`find . -name '*.o'`
+    run gcc -shared -o $TARGET $OBJS -L./lib $LIBSYLPH $LIBSYLPHEED $LIBS -lssleay32 -leay32 -lws2_32 -liconv -lonig
+    if [ -d "$SYLPLUGINDIR" ]; then
+        com="cp $TARGET \"$SYLPLUGINDIR/$NAME.dll\""
+        echo $com
+        eval $com
+    else
+        :
+    fi
 }
 
 case $mode in
