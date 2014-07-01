@@ -26,6 +26,9 @@ m4_define([BUILD_NUMBER], m4_include(build_number))
 AC_DEFINE([BUILD_REVISION], [BUILD_NUMBER], [Build revision])
 AC_SUBST(BUILD_REVISION, [BUILD_NUMBER])
 
+AC_DEFINE([SYLPF_ID], [PACKAGE_NAME], [""])
+AC_DEFINE([SYLPF_OPTION], [autoforward_option], [""])
+
 # Checks for programs.
 AC_PROG_AWK
 AC_PROG_CC
