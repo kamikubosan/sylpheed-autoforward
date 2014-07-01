@@ -18,9 +18,9 @@ AM_INIT_AUTOMAKE
 AC_DEFINE(MAJOR_VERSION, ["major"], [Major version])
 AC_DEFINE(MINOR_VERSION, ["minor"], [Minor version])
 AC_DEFINE(MICRO_VERSION, ["micro"], [Micro version])
-AC_SUBST([MAJOR_VERSION], [major])
-AC_SUBST(MINOR_VERSION, [minor])
-AC_SUBST(MICRO_VERSION, [micro])
+AC_SUBST([MAJOR_VERSION], [autoforward_major])
+AC_SUBST([MINOR_VERSION], [autoforward_minor])
+AC_SUBST([MICRO_VERSION], [autoforward_micro])
 
 m4_define([BUILD_NUMBER], m4_include(build_number))
 AC_DEFINE([BUILD_REVISION], [BUILD_NUMBER], [Build revision])
