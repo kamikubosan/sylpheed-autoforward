@@ -31,7 +31,7 @@ make_def() {
 }
 
 mode=""
-options=$(getopt -o -hdpm -l debug,po,mo -- "$@")
+options=$(getopt -o -hdpm -l debug,po,mo,def -- "$@")
 
 if [ $? -ne 0 ]; then
     usage
@@ -46,7 +46,13 @@ do
         -d|--debug) mode=debug; shift;;
         -p|--po)    mode=po; shift;;
         -m|--mo)    mode=mo; shift;;
-        *)          break;;
+        -def)
+            make_def
+	    shift
+	    ;;
+        *)
+            break
+	    ;;
     esac
 done
 
@@ -167,9 +173,6 @@ case $mode in
             fi
         fi
         compile
-        ;;
-    def)
-        make_def
         ;;
     clean)
         rm -f *.o *.lo *.la *.bak *~
