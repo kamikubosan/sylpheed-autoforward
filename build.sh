@@ -34,6 +34,13 @@ make_distclean() {
     rm -f *.o *.lo *.la *.bak *.dll *.zip
 }
 
+make_mo() {
+    run msgfmt po/ja.po -o po/$NAME.mo
+    if [ -d "$SYLLOCALEDIR" ]; then
+        run cp po/$NAME.mo $SYLLOCALEDIR/$NAME.mo
+    fi
+}
+
 mode=""
 options=$(getopt -o -hdpm -l debug,po,mo,def -- "$@")
 
@@ -49,7 +56,7 @@ do
         -h|--help)   usage && exit 0;;
         -d|--debug) mode=debug; shift;;
         -p|--po)    mode=po; shift;;
-        -m|--mo)    mode=mo; shift;;
+        -m|--mo) make_mo; shift;;
         --def)
             make_def; shift;;
         --dclean)
@@ -134,13 +141,6 @@ case $mode in
 	;;
     po)
         run msgmerge po/ja.po po/$NAME.pot -o po/ja.po
-	;;
-    mo)
-	run msgfmt po/ja.po -o po/$NAME.mo
-        if [ -d "$SYLLOCALEDIR" ]; then
-            run cp po/$NAME.mo $SYLLOCALEDIR/$NAME.mo
-        fi
-        exit 0
 	;;
     ui)
         run gcc -o testui.exe testui.c $INC -L./lib $LIBSYLPH $LIBSYLPHEED $LIBS
