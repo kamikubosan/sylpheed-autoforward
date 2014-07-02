@@ -1,8 +1,8 @@
 #!/bin/bash
 
-TARGET=src/autoforward.dll
-OBJS="src/autoforward.o src/version.o"
-NAME=autoforward
+PKG_NAME=
+TARGET=
+OBJS=
 LIBSYLPH=./lib/libsylph-0-1.a
 LIBSYLPHEED=./lib/libsylpheed-plugin-0-1.a
 #LIBS=" -lglib-2.0-0  -lintl"
@@ -103,7 +103,7 @@ make_release() {
 }
 
 mode=""
-options=$(getopt -o -hdpm -l debug,pot,po,mo,def,res -- "$@")
+options=$(getopt -o -hdpm -l pkg:,debug,pot,po,mo,def,res -- "$@")
 
 if [ $? -ne 0 ]; then
     usage
@@ -118,6 +118,12 @@ do
         -d|--debug) mode=debug; shift;;
         -p|--po)
             run msgmerge po/ja.po po/$NAME.pot -o po/ja.po
+	    shift
+	    ;;
+	--pkg)
+	    shift
+	    PKG_NAME=$1
+	    TARGET=$1.dll
 	    shift
 	    ;;
 	--pot)
