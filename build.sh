@@ -46,7 +46,7 @@ make_mo() {
 }
 
 mode=""
-options=$(getopt -o -hdpm -l debug,pot,po,mo,def -- "$@")
+options=$(getopt -o -hdpm -l debug,pot,po,mo,def,res -- "$@")
 
 if [ $? -ne 0 ]; then
     usage
@@ -71,6 +71,10 @@ do
         -m|--mo) make_mo; shift;;
         --def)
             make_def; shift;;
+	--res)
+            run windres -i version.rc -o version.o
+	    shift
+	    ;;
         --dclean)
 	    make_distclean; shift;;
 	--clean)
@@ -144,9 +148,6 @@ case $mode in
     ui)
         run gcc -o testui.exe testui.c $INC -L./lib $LIBSYLPH $LIBSYLPHEED $LIBS
         ;;
-    res)
-        run windres -i version.rc -o version.o
-	;;
     release)
 	if [ ! -z "$1" ]; then
 	    r=$1
