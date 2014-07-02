@@ -46,7 +46,7 @@ make_mo() {
 }
 
 mode=""
-options=$(getopt -o -hdpm -l debug,po,mo,def -- "$@")
+options=$(getopt -o -hdpm -l debug,pot,po,mo,def -- "$@")
 
 if [ $? -ne 0 ]; then
     usage
@@ -59,7 +59,15 @@ do
     case "$1" in
         -h|--help)   usage && exit 0;;
         -d|--debug) mode=debug; shift;;
-        -p|--po)    mode=po; shift;;
+        -p|--po)
+            run msgmerge po/ja.po po/$NAME.pot -o po/ja.po
+	    shift
+	    ;;
+	--pot)
+            mkdir -p po
+	    run xgettext src/$NAME.c -k_ -kN_ -o po/$NAME.pot
+	    shift
+	    ;;
         -m|--mo) make_mo; shift;;
         --def)
             make_def; shift;;
@@ -132,13 +140,6 @@ case $mode in
     debug)
         DEF=" $DEF -DDEBUG"
 	compile
-	;;
-    pot)
-        mkdir -p po
-	run xgettext src/$NAME.c -k_ -kN_ -o po/$NAME.pot
-	;;
-    po)
-        run msgmerge po/ja.po po/$NAME.pot -o po/ja.po
 	;;
     ui)
         run gcc -o testui.exe testui.c $INC -L./lib $LIBSYLPH $LIBSYLPHEED $LIBS
