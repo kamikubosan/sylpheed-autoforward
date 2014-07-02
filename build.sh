@@ -45,6 +45,10 @@ make_mo() {
     fi
 }
 
+make_res() {
+    run windres -i version.rc -o version.o
+}
+
 mode=""
 options=$(getopt -o -hdpm -l debug,pot,po,mo,def,res -- "$@")
 
@@ -72,7 +76,7 @@ do
         --def)
             make_def; shift;;
 	--res)
-            run windres -i version.rc -o version.o
+            make_res
 	    shift
 	    ;;
         --release)
