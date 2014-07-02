@@ -98,7 +98,7 @@ do
     esac
 done
 
-function make_release() {
+make_release() {
     if [ -z "$1" ]; then
 	return
     fi
