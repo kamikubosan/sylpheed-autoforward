@@ -75,7 +75,16 @@ do
             run windres -i version.rc -o version.o
 	    shift
 	    ;;
-        --dclean)
+        --release)
+	    shift
+	    if [ -z "$1" ]; then
+		usage && exit 1
+	    else
+		make_release $1
+		shift
+	    fi
+	    ;;
+	--dclean)
 	    make_distclean; shift;;
 	--clean)
 	    make_clean; shift;;
@@ -84,6 +93,29 @@ do
 	    ;;
     esac
 done
+
+function make_release() {
+    if [ -z "$1" ]; then
+	return
+    fi
+    version=$1
+    shift
+    if [ -f src/$NAME.dll ]; then
+	mv src/$NAME.dll .
+    fi
+    zip sylpheed-$NAME-${r}.zip $NAME.dll
+    zip -r sylpheed-$NAME-$version.zip doc/README.ja.txt
+    zip -r sylpheed-$NAME-$version.zip src/*.h
+    zip -r sylpheed-$NAME-$version.zip src/auto*.c
+    zip -r sylpheed-$NAME-$version.zip res/*.rc
+    zip -r sylpheed-$NAME-$version.zip po/$NAME.mo
+    zip -r sylpheed-$NAME-$version.zip res/*.xpm
+    zip -r sylpheed-$NAME-$version.zip COPYING
+    zip -r sylpheed-$NAME-$version.zip LICENSE
+    zip -r sylpheed-$NAME-$version.zip README.md
+    zip -r sylpheed-$NAME-$version.zip NEWS
+    sha1sum sylpheed-$NAME-$version.zip > sylpheed-$NAME-$version.zip.sha1sum
+}
 
 TARGET=src/autoforward.dll
 OBJS="src/autoforward.o src/version.o"
@@ -148,27 +180,6 @@ case $mode in
     ui)
         run gcc -o testui.exe testui.c $INC -L./lib $LIBSYLPH $LIBSYLPHEED $LIBS
         ;;
-    release)
-	if [ ! -z "$1" ]; then
-	    r=$1
-	    shift
-            if [ -f src/$NAME.dll ]; then
-		mv src/$NAME.dll .
-	    fi
-	    zip sylpheed-$NAME-${r}.zip $NAME.dll
-            zip -r sylpheed-$NAME-$r.zip doc/README.ja.txt
-            zip -r sylpheed-$NAME-$r.zip src/*.h
-            zip -r sylpheed-$NAME-$r.zip src/auto*.c
-            zip -r sylpheed-$NAME-$r.zip res/*.rc
-            zip -r sylpheed-$NAME-$r.zip po/$NAME.mo
-            zip -r sylpheed-$NAME-$r.zip res/*.xpm
-            zip -r sylpheed-$NAME-$r.zip COPYING
-            zip -r sylpheed-$NAME-$r.zip LICENSE
-            zip -r sylpheed-$NAME-$r.zip README.md
-            zip -r sylpheed-$NAME-$r.zip NEWS
-            sha1sum sylpheed-$NAME-$r.zip > sylpheed-$NAME-$r.zip.sha1sum
-        fi
-	;;
     compile)
         if [ ! -z "$1" ]; then
             if [ "$1" = "stable" ]; then
