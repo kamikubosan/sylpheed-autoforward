@@ -138,19 +138,6 @@ SUBMINOR=0
 
 function compile ()
 {
-    if [ ! -f "$PBUILDH" ]; then
-        echo "1" > $DCOMPILE
-        echo "#define PRIVATE_BUILD 1" > $PBUILDH
-    else
-        ret=`cat $DCOMPILE | gawk '{print $i+1}'`
-        echo $ret | tee $DCOMPILE
-        echo "#define PRIVATE_BUILD \"build $ret\\0\"" > $PBUILDH
-        echo "#define NAME \"Autoforward\\0\"" >> $PBUILDH
-        echo "#define VERSION \"$MAJOR, $MINOR, $SUBMINOR, 0\\0\"" >> $PBUILDH
-        echo "#define NAMEVERSION \"Autoforward $MAJOR.$MINOR.$SUBMINOR\\0\"" >> $PBUILDH
-        echo "#define QVERSION \"$MAJOR,$MINOR,$SUBMINOR,0\"" >> $PBUILDH
-        echo "#define RVERSION $MAJOR,$MINOR,$SUBMINOR,0" >> $PBUILDH
-    fi
     com="windres -i res/version.rc -o src/version.o"
     echo $com
     eval $com
