@@ -1,5 +1,15 @@
 #!/bin/bash
 
+TARGET=src/autoforward.dll
+OBJS="src/autoforward.o src/version.o"
+NAME=autoforward
+LIBSYLPH=./lib/libsylph-0-1.a
+LIBSYLPHEED=./lib/libsylpheed-plugin-0-1.a
+#LIBS=" -lglib-2.0-0  -lintl"
+LIBS=" `pkg-config --libs glib-2.0 gobject-2.0 gtk+-2.0`"
+INC=" -I. -I./src -I./lib/sylplugin_factory/src -I../../ -I../../libsylph -I../../src  `pkg-config --cflags glib-2.0 cairo gdk-2.0 gtk+-2.0`"
+DEF=" -DHAVE_CONFIG_H"
+
 run() {
     "$@"
     if test $? -ne 0; then
@@ -140,22 +150,4 @@ do
 	    ;;
     esac
 done
-
-TARGET=src/autoforward.dll
-OBJS="src/autoforward.o src/version.o"
-NAME=autoforward
-LIBSYLPH=./lib/libsylph-0-1.a
-LIBSYLPHEED=./lib/libsylpheed-plugin-0-1.a
-#LIBS=" -lglib-2.0-0  -lintl"
-LIBS=" `pkg-config --libs glib-2.0 gobject-2.0 gtk+-2.0`"
-INC=" -I. -I./src -I./lib/sylplugin_factory/src -I../../ -I../../libsylph -I../../src  `pkg-config --cflags glib-2.0 cairo gdk-2.0 gtk+-2.0`"
-DEF=" -DHAVE_CONFIG_H"
-
-PBUILDH="src/private_build.h" 
-DCOMPILE="src/.compile"
-
-
-MAJOR=0
-MINOR=7
-SUBMINOR=0
 
