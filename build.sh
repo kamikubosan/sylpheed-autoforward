@@ -49,6 +49,49 @@ make_res() {
     run windres -i version.rc -o version.o
 }
 
+
+compile () {
+    make_res
+
+    for src in `find . -name '*.c'`; do
+	src_base=${src%%.c}
+	run gcc -Wall -c -o ${src_base}.o $DEF $INC ${src}
+    done
+
+    OBJS=`find . -name '*.o'`
+    run gcc -shared -o $TARGET $OBJS -L./lib $LIBSYLPH $LIBSYLPHEED $LIBS -lssleay32 -leay32 -lws2_32 -liconv -lonig
+    if [ -d "$SYLPLUGINDIR" ]; then
+        com="cp $TARGET \"$SYLPLUGINDIR/$NAME.dll\""
+        echo $com
+        eval $com
+    else
+        :
+    fi
+}
+
+make_release() {
+    if [ -z "$1" ]; then
+	return
+    fi
+    version=$1
+    shift
+    if [ -f src/$NAME.dll ]; then
+	mv src/$NAME.dll .
+    fi
+    zip sylpheed-$NAME-${r}.zip $NAME.dll
+    zip -r sylpheed-$NAME-$version.zip doc/README.ja.txt
+    zip -r sylpheed-$NAME-$version.zip src/*.h
+    zip -r sylpheed-$NAME-$version.zip src/auto*.c
+    zip -r sylpheed-$NAME-$version.zip res/*.rc
+    zip -r sylpheed-$NAME-$version.zip po/$NAME.mo
+    zip -r sylpheed-$NAME-$version.zip res/*.xpm
+    zip -r sylpheed-$NAME-$version.zip COPYING
+    zip -r sylpheed-$NAME-$version.zip LICENSE
+    zip -r sylpheed-$NAME-$version.zip README.md
+    zip -r sylpheed-$NAME-$version.zip NEWS
+    sha1sum sylpheed-$NAME-$version.zip > sylpheed-$NAME-$version.zip.sha1sum
+}
+
 mode=""
 options=$(getopt -o -hdpm -l debug,pot,po,mo,def,res -- "$@")
 
@@ -98,29 +141,6 @@ do
     esac
 done
 
-make_release() {
-    if [ -z "$1" ]; then
-	return
-    fi
-    version=$1
-    shift
-    if [ -f src/$NAME.dll ]; then
-	mv src/$NAME.dll .
-    fi
-    zip sylpheed-$NAME-${r}.zip $NAME.dll
-    zip -r sylpheed-$NAME-$version.zip doc/README.ja.txt
-    zip -r sylpheed-$NAME-$version.zip src/*.h
-    zip -r sylpheed-$NAME-$version.zip src/auto*.c
-    zip -r sylpheed-$NAME-$version.zip res/*.rc
-    zip -r sylpheed-$NAME-$version.zip po/$NAME.mo
-    zip -r sylpheed-$NAME-$version.zip res/*.xpm
-    zip -r sylpheed-$NAME-$version.zip COPYING
-    zip -r sylpheed-$NAME-$version.zip LICENSE
-    zip -r sylpheed-$NAME-$version.zip README.md
-    zip -r sylpheed-$NAME-$version.zip NEWS
-    sha1sum sylpheed-$NAME-$version.zip > sylpheed-$NAME-$version.zip.sha1sum
-}
-
 TARGET=src/autoforward.dll
 OBJS="src/autoforward.o src/version.o"
 NAME=autoforward
@@ -138,27 +158,4 @@ DCOMPILE="src/.compile"
 MAJOR=0
 MINOR=7
 SUBMINOR=0
-
-
-function compile ()
-{
-    com="windres -i res/version.rc -o src/version.o"
-    echo $com
-    eval $com
-
-    for src in `find . -name '*.c'`; do
-	src_base=${src%%.c}
-	run gcc -Wall -c -o ${src_base}.o $DEF $INC ${src}
-    done
-
-    OBJS=`find . -name '*.o'`
-    run gcc -shared -o $TARGET $OBJS -L./lib $LIBSYLPH $LIBSYLPHEED $LIBS -lssleay32 -leay32 -lws2_32 -liconv -lonig
-    if [ -d "$SYLPLUGINDIR" ]; then
-        com="cp $TARGET \"$SYLPLUGINDIR/$NAME.dll\""
-        echo $com
-        eval $com
-    else
-        :
-    fi
-}
 
