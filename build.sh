@@ -162,25 +162,3 @@ function compile ()
     fi
 }
 
-case $mode in
-
-    debug)
-        DEF=" $DEF -DDEBUG"
-	compile
-	;;
-    ui)
-        run gcc -o testui.exe testui.c $INC -L./lib $LIBSYLPH $LIBSYLPHEED $LIBS
-        ;;
-    compile)
-        if [ ! -z "$1" ]; then
-            if [ "$1" = "stable" ]; then
-                DEF="$DEF -DSTABLE_RELEASE";
-                shift
-            fi
-        fi
-        compile
-        ;;
-    *)
-	compile
-	;;
-esac
