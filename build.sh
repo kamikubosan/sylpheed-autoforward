@@ -103,7 +103,7 @@ make_release() {
 }
 
 mode=""
-options=$(getopt -o -cChdpmkte -l pkg:,debug,pot,po,mo,def,res -- "$@")
+options=$(getopt -o -bcChdpmkte -l build,pkg:,debug,pot,po,mo,def,res -- "$@")
 
 if [ $? -ne 0 ]; then
     usage
