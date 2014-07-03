@@ -103,7 +103,7 @@ make_release() {
 }
 
 mode=""
-options=$(getopt -o -hdpm -l pkg:,debug,pot,po,mo,def,res -- "$@")
+options=$(getopt -o -cChdpmkte -l pkg:,debug,pot,po,mo,def,res -- "$@")
 
 if [ $? -ne 0 ]; then
     usage
@@ -114,31 +114,31 @@ eval set -- "${options}"
 while true
 do
     case "$1" in
-        -h|--help)   usage && exit 0;;
+	-h|--help)   usage && exit 0;;
         -d|--debug) mode=debug; shift;;
         -p|--po)
             run msgmerge po/ja.po po/$NAME.pot -o po/ja.po
 	    shift
 	    ;;
-	--pkg)
+	-k|--pkg)
 	    shift
 	    PKG_NAME=$1
 	    TARGET=$1.dll
 	    shift
 	    ;;
-	--pot)
+	-t|--pot)
             mkdir -p po
 	    run xgettext src/$NAME.c -k_ -kN_ -o po/$NAME.pot
 	    shift
 	    ;;
         -m|--mo) make_mo; shift;;
-        --def)
+        -e|--def)
             make_def; shift;;
-	--res)
+	-s|--res)
             make_res
 	    shift
 	    ;;
-        --release)
+        -r|--release)
 	    shift
 	    if [ -z "$1" ]; then
 		usage && exit 1
@@ -147,9 +147,9 @@ do
 		shift
 	    fi
 	    ;;
-	--dclean)
+	-C|--dclean)
 	    make_distclean; shift;;
-	--clean)
+	-c|--clean)
 	    make_clean; shift;;
 	*)
             break
