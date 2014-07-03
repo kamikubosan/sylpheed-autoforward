@@ -116,7 +116,10 @@ do
     case "$1" in
 	-h|--help)   usage && exit 0;;
         -d|--debug) mode=debug; shift;;
-        -p|--po)
+        -b|--build)
+	    compile
+	    ;;
+	-p|--po)
             run msgmerge po/ja.po po/$NAME.pot -o po/ja.po
 	    shift
 	    ;;
