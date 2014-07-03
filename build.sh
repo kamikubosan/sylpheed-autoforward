@@ -56,7 +56,7 @@ make_mo() {
 }
 
 make_res() {
-    run windres -i version.rc -o version.o
+    run windres -i res/version.rc -o version.o
 }
 
 
