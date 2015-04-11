@@ -20,5 +20,5 @@ before_script:
   - git submodule update --init --recursive
   - ./autogen.sh
 script:
-  - ./configure --with-sylpheed-build-dir=`pwd`/sylpheed
+  - curl --location https://github.com/kenhys/sylpheed-plugin-factory/raw/master/misc/travis/configure.sh | sh
   - make
