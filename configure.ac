@@ -13,7 +13,7 @@ AC_CONFIG_HEADERS([src/config.h])
 AC_CONFIG_AUX_DIR([config])
 AC_CONFIG_MACRO_DIR([m4])
 
-AM_INIT_AUTOMAKE
+AM_INIT_AUTOMAKE([foreign])
 
 AC_DEFINE(MAJOR_VERSION, ["autoforward_major"], [Major version])
 AC_DEFINE(MINOR_VERSION, ["autoforward_minor"], [Minor version])
