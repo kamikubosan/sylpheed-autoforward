@@ -3,8 +3,9 @@ compiler:
   - gcc
   - clang
 notifications:
-  recipients:
-    - kenhys@gmail.com
+  email:
+    recipients:
+      - kenhys@gmail.com
 branches:
   only:
     - master
@@ -14,9 +15,10 @@ env:
   - SYLPHEED_STAGE=3.5
   - SYLPHEED_STAGE=3.4
 before_script:
-  - curl --location https://raw.github.com/kenhys/sylpheed-plugin-factory/master/misc/setup-travis.sh | sh
+  - curl --location https://github.com/kenhys/sylpheed-plugin-factory/raw/master/misc/travis/sylpheed.sh | sh
+  - curl --location https://github.com/kenhys/sylpheed-plugin-factory/raw/master/misc/travis/sylplugin-factory.sh | sh
   - git submodule update --init --recursive
   - ./autogen.sh
 script:
-  - ./configure --with-sylpheed-build-dir=`pwd`/sylpheed
+  - curl --location https://github.com/kenhys/sylpheed-plugin-factory/raw/master/misc/travis/configure.sh | sh
   - make

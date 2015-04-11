@@ -52,8 +52,7 @@ if test "x$plugin_debug" != "xno"; then
 fi
 AC_SUBST(plugin_debug)
 
-m4_include(lib/sylplugin_factory/m4/compiler_flag.m4)
-m4_include(lib/sylplugin_factory/m4/sylplugin_factory.m4)
+m4_include(macros/sylplugin_factory.m4)
 
 # Checks for libraries.
 AM_PATH_GLIB_2_0(2.8.0,, AC_MSG_ERROR(Test for GLib failed. See the 'INSTALL' for help.))
