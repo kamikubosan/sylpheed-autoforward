@@ -9,7 +9,7 @@ environment:
 install:
   - set
   - cd %APPVEYOR_BUILD_FOLDER%\..
-  - choco install -y curl 7zip.commandline
+  - choco install -y 7zip.commandline
   - c:\MinGW\bin\mingw-get install pexports
   - set SDK_ARCHIVE_URL="http://sylpheed.sraoss.jp/sylpheed/win32/MinGW/GTK-MinGW-SDK_%SYLPHEED_SDK_VERSION%.zip"
   - appveyor DownloadFile %SDK_ARCHIVE_URL%
