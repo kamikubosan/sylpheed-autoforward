@@ -17,7 +17,7 @@ install:
   - set SOURCE_ARCHIVE_URL="https://sylpheed.sraoss.jp/sylpheed/v%SYLPHEED_ZIP_VERSION%/sylpheed-%SYLPHEED_SOURCE_VERSION%.tar.gz"
   - appveyor DownloadFile %SOURCE_ARCHIVE_URL%
   - 7z x sylpheed-%SYLPHEED_SOURCE_VERSION%.tar.gz
-  - 7z x sylpheed-%SYLPHEED_SOURCE_VERSION.tar > nul
+  - 7z x sylpheed-%SYLPHEED_SOURCE_VERSION%.tar > nul
   - set ZIP_ARCHIVE_URL="https://osdn.net/dl/sylpheed/sylpheed-%SYLPHEED_ZIP_VERSION%-win32.zip"
   - appveyor DownloadFile %ZIP_ARCHIVE_URL%
   - 7z x sylpheed-%SYLPEED_ZIP_VERSION%-win32.zip
