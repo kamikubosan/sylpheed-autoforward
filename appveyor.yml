@@ -1,0 +1,35 @@
+version: "{build}"
+clone_depth: 10
+environment:
+  matrix:
+    - SYLPHEED_SOURCE_VERSION: 3.7.0
+      SYLPHEED_ZIP_VERSION: 3.7
+      SYLPHEED_SDK_VERSION: 20140603
+
+install:
+  - set
+  - cd %APPVEYOR_BUILD_FOLDER%\..
+  - choco install -y curl 7zip.commandline
+  - c:\MinGW\bin\mingw-get install pexports
+  - ps: Start-FileDownload "http://sylpheed.sraoss.jp/sylpheed/win32/MinGW/GTK-MinGW-SDK_%SYLPHEED_SDK_VERSION%.zip"
+  - 7z x GTK-MinGW-SDK_%SYLPHEED_SDK_VERSION%.zip
+  - ps: Start-FileDownload "https://sylpheed.sraoss.jp/sylpheed/v3.7/sylpheed-3.7.0.tar.gz"
+  - 7z x sylpheed-%SYLPHEED_SOURCE_VERSION%.tar.gz
+  - 7z x sylpheed-%SYLPHEED_SOURCE_VERSION.tar > nul
+  - ps: Start-FileDownload "https://osdn.net/dl/sylpheed/sylpheed-%SYLPHEED_ZIP_VERSION%-win32.zip"
+  - 7z x sylpheed-%SYLPEED_ZIP_VERSION%-win32.zip
+  - cd Sylpheed-%SYLPEED_BINARY_VERSION%
+  - pexports libsylph-0-1.dll > libsylph-0-1.def
+  - dlltool --dllname libsylph-0-1.dll --input-def libsylph-0-1.def --output-lib libsylph-0-1.a
+  - pexports libsylpheed-plugin-0-1.dll > libsylpheed-plugin-0-1.def
+  - dlltool --dllname libsylpheed-plugin-0-1.dll --input-def libsylpheed-plugin-0-1.def --output-lib libsylpheed-plugin-0-1.a
+  - dir
+  - set PATH=%APPVEYOR_BUILD_FOLDER%\..\GTK\bin;%PATH%
+  - set PKG_CONFIG_PATH=%APPVEYOR_BUILD_FOLDER%\..\GTK\lib\pkgconfig
+  - pkg-config --version
+test: off
+
+build_script:
+  - set
+  - cd %APPVEYOR_BUILD_FOLDER%
+  - sh .\autogen.sh
